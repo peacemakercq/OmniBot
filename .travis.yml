@@ -1,4 +1,5 @@
 language: java
+sudo: false # faster builds
 jdk:
   - openjdk8
 
@@ -6,8 +7,11 @@ env:
   global:
     - CODECOV_TOKEN=b15a9a38-5e44-4cf3-9cae-5bca12ef970d
 
+before_script:
+  - chmod +x gradlew
+
 script:
- - gradle build
+  - ./gradlew check
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
