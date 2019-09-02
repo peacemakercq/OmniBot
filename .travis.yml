@@ -2,5 +2,12 @@ language: java
 jdk:
   - oraclejdk8
 
+env:
+  global:
+    - CODECOV_TOKEN=b15a9a38-5e44-4cf3-9cae-5bca12ef970d
+
 script:
  - gradle build
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
