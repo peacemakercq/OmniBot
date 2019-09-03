@@ -1,0 +1,45 @@
+TCBBot:
+  market: tse
+  permissionCode: 1234
+  state: currentState
+  symphony:
+    role: Bot
+    id: TCB-Bot
+    address: tcb@xx.com
+    alias: TCBBot
+symphonyContact:
+  appOwners:
+    - id: Qiqi
+      address: 2622853312@qq.com
+      alias: QQ
+    - id: Anan
+      address: 1111@qq.com
+      alias: 11
+  Manager:
+    - id: Anan
+      address: anan@qq.com
+      alias: anan
+  BMO:
+    - id: BMO
+      address: bmo@123.com
+      alias: bmo
+  MarketData:
+    - id: MarketData
+      address: md@123.com
+      alias: md
+StateSymphonyMap:
+  RenewStart: appOwners
+  doRenew: Manager
+  renewFAQ: appOwners
+  noRenew: MarketData
+  ManagerApprove: BMO
+  ManagerFAQ: BMO
+  ManagerReject: appOwners
+
+  BMOApprove: appOwners
+  BMIFAQ: BMO
+  BMOReject: Manager
+
+  notifyManagerReject: appOwners
+  notifyOwnerAccept: MarketData
+  notifyOwnerReject: MarketData

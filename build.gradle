@@ -25,6 +25,9 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.0-RC2'
 	implementation 'org.symphonyoss.symphony:symphony-client:1.1.4'
@@ -38,6 +41,14 @@ dependencies {
 	implementation 'software.amazon.awssdk:netty-nio-client'
 	implementation 'software.amazon.awssdk:apache-client'
 	implementation 'software.amazon.awssdk:s3'
+
+	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.9.9'
+	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-properties', version: '2.9.9'
+
+	compile group: 'net.sourceforge.plantuml', name: 'plantuml', version: '8059'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompile group: 'junit', name: 'junit', version: '4.12'
 	
 }
 
