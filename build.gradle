@@ -38,6 +38,8 @@ dependencies {
 	implementation 'software.amazon.awssdk:netty-nio-client'
 	implementation 'software.amazon.awssdk:apache-client'
 	implementation 'software.amazon.awssdk:s3'
+
+	implementation 'com.google.guava:guava:28.1-jre'
 	
 }
 
