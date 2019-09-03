@@ -1,0 +1,24 @@
+@startuml
+
+participant DetectionService
+participant "OmniBot (Long-running process)" as OmniBot
+participant WorkflowService
+participant "NLPBot (Lex)" as NLPBot
+participant "Bot (Symphony)" as Bot
+actor Bob
+
+DetectionService -> OmniBot: please renew {Bob}'s license which will expire at {2019/10/28}
+OmniBot -> WorkflowService: startWorkflow(LicenseRenewal)
+WorkflowService --> OmniBot: contextId
+OmniBot -> WorkflowService: nextState(contextId, null)
+WorkflowService --> OmniBot: <"Do you want to renew your license?", "Bob">
+OmniBot -> NLPBot: sendMessage("Do you want to renew your license?", "Bob")
+NLPBot -> Bot: sendMessage("Do you want to renew your license?", "Bob")
+Bot -> Bob: "Do you want to renew your license?"
+Bob --> Bot: "Of course I do."
+Bot --> NLPBot: "Of course I do."
+NLPBot --> OmniBot: "yes"
+OmniBot -> WorkflowService: nextState(contextId, "yes")
+WorkflowService --> OmniBot: <"Do you approve?", "Mr. Manager">
+
+@enduml
