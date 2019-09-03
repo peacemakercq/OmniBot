@@ -16,6 +16,7 @@ public class OmniBotApplication
 
 		LexServiceImpl lexService = SpringUtil.getBean(LexServiceImpl.class);
 		BotEntity botInfo = lexService.getBotInfo("OrderFlowers", "Dev");
+		lexService.CreateBot();
 		log.info(botInfo);
 	}
 

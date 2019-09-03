@@ -60,11 +60,14 @@ public class LexServiceImpl
             PutSlotTypeResponse putSlotTypeResponse = lexModelBuildingClient.putSlotType(builder -> builder
                     .name(slotTypeName)
                     .enumerationValues(values)
+                    .createVersion(true)
                     .valueSelectionStrategy(SlotValueSelectionStrategy.TOP_RESOLUTION)
                     .build());
             slots.add(Slot.builder().name(putSlotTypeResponse.name())
-                                                             .slotType(putSlotTypeResponse.name())
-                                                             .build());
+                              .slotType(putSlotTypeResponse.name())
+                              .slotTypeVersion(putSlotTypeResponse.version())
+                              .slotConstraint("Required")
+                              .build());
         });
 
         return slots;
@@ -72,51 +75,52 @@ public class LexServiceImpl
 
     private Intent putIntents(String intentName, List<Slot> slots)
     {
-        lexModelBuildingClient.putIntent(builder -> builder
+        PutIntentResponse putIntentResponse = lexModelBuildingClient.putIntent(builder -> builder
                 .name(intentName)
                 .conclusionStatement(getConclusionStatement("Thank you, we'll proceed the renew " +
                                                                     "process"))
                 .confirmationPrompt(getConfirmationPrompt("Your {License} license will be " +
                                                                   "now going to approval process." +
                                                                   "  Does this sound okay?"))
-                .fulfillmentActivity(fulfillmentActivityBuilder->
-                    fulfillmentActivityBuilder.type(FulfillmentActivityType.RETURN_INTENT)
-                )
+                .fulfillmentActivity(fulfillmentActivityBuilder ->
+                                             fulfillmentActivityBuilder.type(FulfillmentActivityType.RETURN_INTENT)
+                                    )
                 .rejectionStatement(getRejectionStatement("Okay, I will not renew your license."))
                 .sampleUtterances("kick off license {License} renewal")
                 .slots(slots)
+                .createVersion(true)
                 .build());
-        return Intent.builder().intentName(intentName).build();
+        return Intent.builder().intentName(intentName).intentVersion(putIntentResponse.version()).build();
     }
 
     private Prompt getConfirmationPrompt(String prompt)
     {
-        Message message = Message.builder().content(prompt).build();
+        Message message = Message.builder().content(prompt).contentType("PlainText").build();
         return Prompt.builder().maxAttempts(2).messages(message).build();
 
     }
 
     private Statement getConclusionStatement(String content)
     {
-        Message message = Message.builder().content(content).build();
+        Message message = Message.builder().content(content).contentType("PlainText").build();
         return Statement.builder().messages(message).build();
     }
 
     private Statement getAbortStatement(String content)
     {
-        Message message = Message.builder().content(content).build();
+        Message message = Message.builder().content(content).contentType("PlainText").build();
         return Statement.builder().messages(message).build();
     }
 
     private Statement getRejectionStatement(String content)
     {
-        Message message = Message.builder().content(content).build();
+        Message message = Message.builder().content(content).contentType("PlainText").build();
         return Statement.builder().messages(message).build();
     }
 
     private Prompt getClarificationPrompt(String prompt)
     {
-        Message message = Message.builder().content(prompt).build();
+        Message message = Message.builder().content(prompt).contentType("PlainText").build();
         return Prompt.builder().maxAttempts(2).messages(message).build();
     }
 
