@@ -1,0 +1,45 @@
+@startuml
+
+[*] -> AskForRenewal
+AskForRenewal -> QA1
+AskForRenewal -> [*]: No
+
+QA1 -> QA2
+QA2 -> QA3
+QA3 -> QA4
+QA4 -> QA5
+QA5 -> QA6
+QA6 -> Scenario1: Yes
+QA6 -> Scenario2: IDK
+QA6 -> Scenario3: No && {a:QA3}==Yes
+QA6 -> Scenario4: No && {a:QA3}==IDK && {a:QA4}==No
+QA6 -> Scenario5: No && {a:QA3}==IDK && {a:QA4}==Yes
+QA6 -> Scenario6: No && {a:QA3}==IDK && {a:QA4}==IDK
+QA6 -> Scenario7: No && {a:QA3}==No && {a:QA4}==No
+QA6 -> Scenario8: No && {a:QA3}==No && {a:QA4}==Yes
+QA6 -> Scenario9: No && {a:QA3}==No && {a:QA4}==IDK
+
+Scenario1 -> ManagerApproval: Yes
+Scenario2 -> ManagerApproval: Yes
+Scenario3 -> ManagerApproval
+Scenario4 -> ManagerApproval
+Scenario5 -> ManagerApproval: Yes
+Scenario6 -> ManagerApproval: Yes
+Scenario7 -> ManagerApproval: Yes
+Scenario8 -> ManagerApproval: Yes
+
+Scenario1 -> [*]: No
+Scenario2 -> [*]: No
+Scenario5 -> [*]: No
+Scenario6 -> [*]: No
+Scenario7 -> [*]: No
+Scenario8 -> [*]: No
+Scenario9 -> [*]: No
+
+ManagerApproval -> BMOReview: Yes
+ManagerApproval -> [*]: No
+
+BMOReview -> RenewLicense: Yes
+BMOReview -> [*]: No
+
+@enduml

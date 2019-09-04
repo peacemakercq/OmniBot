@@ -1,0 +1,78 @@
+BMOMailAddresses:
+    OPHK4A2: bmo1.address@tcb.com
+    OAHK401: bmo2.address@tcb.com
+
+# Runtime Placeholder syntax:
+# - all metadata can be referenced by syntax: {d:meta_key_name}
+# - any question text can be referenced by syntax: {q:state_name}
+# - any answer text can be referenced by syntax: {a:state_name}
+#
+# Static Placeholder syntax:
+# - any static configuration items defined above can be referenced by syntax: ${path.to.config}
+#   NOTE: you can use Runtime placeholder syntax in Static placeholder, but NOT vice versa.
+#         That's because the Runtime Placeholders are always populated prior to Static Placeholders
+
+AskForRenewal:
+    sendTo: license.owner@tcb.com
+    question: Do you want to renew {d:license}?\n{d:pre_defined_info}
+QA1:
+    sendTo: license.owner@tcb.com
+    question: How often do you use the application that you wish to renew license for?
+QA2:
+    sendTo: license.owner@tcb.com
+    question: Are you the only person in your team whom require access to the application you wish to have license renewed?
+QA3:
+    sendTo: license.owner@tcb.com
+    question: Is it possible to use a shared account to access the application you wish to have license renewed?
+QA4:
+    sendTo: license.owner@tcb.com
+    question: How much disruption does it create for the work that you do in case your license renewal request cannot be approved?
+QA5:
+    sendTo: license.owner@tcb.com
+    question: Are there any workaround you can source the same information you require without using the application you are requesting for license renewal?
+QA6:
+    sendTo: license.owner@tcb.com
+    question: Can you access this license if required on another machine / another location (i.e. BCP site)?
+
+Scenario1:
+    sendTo: license.owner@tcb.com
+    question: You can consider utilizing the work around to source the info.\n Do you still wish to proceed with this license renewal request?
+Scenario2:
+    sendTo: license.owner@tcb.com
+    question: You can consider to find out possible workaround to source the info.\n Do you still wish to proceed with this license renewal request?
+Scenario3:
+    sendTo: license.owner@tcb.com
+    message: Your license renewal request will be notified to approver  # a message is different than question, which doesn't require reply
+Scenario4:
+    sendTo: license.owner@tcb.com
+    message: Your license renewal request will be notified to approver
+Scenario5:
+    sendTo: license.owner@tcb.com
+    question: You can consider utilizing a shared account to source the info.\n Do you still wish to proceed with this license renewal request?
+Scenario6:
+    sendTo: license.owner@tcb.com
+    question: You can explore possibility to utilize a shared account if available.\n Do you still wish to proceed with this license renewal request?
+Scenario7:
+    sendTo: license.owner@tcb.com
+    question: Your license renewal request will be notified to approver.\n Do you still wish to proceed with this license renewal request?
+Scenario8:
+    sendTo: license.owner@tcb.com
+    question: You can consider utilizing a shared account to source the info.\n Do you still wish to proceed with this license renewal request?
+Scenario9:
+    sendTo: license.owner@tcb.com
+    question: You can explore possibility to utilize a shared account if available.\n Do you still wish to proceed with this license renewal request?
+
+ManagerApproval:
+    sendTo: license.manager@tcb.com
+    question: Do you approve {d:user}'s request to renew license:{d:license}\n{q:QA1}-{a:QA1}\n{q:QA2}-{a:QA2}\n{q:QA3}-{a:QA3}\n{q:QA4}-{a:QA4}\n{q:QA5}-{a:QA5}\n{q:QA6}-{a:QA6}
+    postNotify:
+        - sendTo: license.manager@tcb.com
+          notification: your request has been approved by {to:ManagerApproval}
+
+BMOReview:
+    sendTo: license.bmo@tcb.com
+    question: Please review and approve {d:predefined_user_info}
+
+RenewLicense:
+    sendTo: ${BMOMailAddresses.{d:cost_center}}
+    question: Please renew {d:predefined_user_info}
