@@ -1,5 +1,6 @@
 package org.innov8.tcb.state;
 
+import org.innov8.tcb.core.state.StateManager;
 import org.junit.Test;
 
 /**

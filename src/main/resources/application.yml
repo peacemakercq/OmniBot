@@ -1,45 +1,80 @@
-TCBBot:
-  market: tse
-  permissionCode: 1234
-  state: currentState
-  symphony:
-    role: Bot
-    id: TCB-Bot
-    address: tcb@xx.com
-    alias: TCBBot
-symphonyContact:
-  appOwners:
-    - id: Qiqi
-      address: 2622853312@qq.com
-      alias: QQ
-    - id: Anan
-      address: 1111@qq.com
-      alias: 11
-  Manager:
-    - id: Anan
-      address: anan@qq.com
-      alias: anan
-  BMO:
-    - id: BMO
-      address: bmo@123.com
-      alias: bmo
-  MarketData:
-    - id: MarketData
-      address: md@123.com
-      alias: md
-StateSymphonyMap:
-  RenewStart: appOwners
-  doRenew: Manager
-  renewFAQ: appOwners
-  noRenew: MarketData
-  ManagerApprove: BMO
-  ManagerFAQ: BMO
-  ManagerReject: appOwners
 
-  BMOApprove: appOwners
-  BMIFAQ: BMO
-  BMOReject: Manager
+conversationmanager:
+  conversationMap:
+    RenewStart:
+      id: RenewStart
+      sendTo: appOwner
+      conversations:
+        - Do you want to renew {d:license}?\n{d:pre_defined_info}
+        - How often do you use the application that you wish to renew license for?
+        - Are you the only person in your team whom require access to the application you wish to have license renewed?
+        - Is it possible to use a shared account to access the application you wish to have license renewed?
+        - How much disruption does it create for the work that you do in case your license renewal request cannot be approved?
+        - Are there any workaround you can source the same information you require without using the application you are requesting for license renewal?
+        - Can you access this license if required on another machine / another location (i.e. BCP site)?
+    doRenew:
+      id: doRenew
+      sendTo: manager
+      conversations:
+        - Manager Approval required for license renew.\nplease enter 'Yes', 'No', or 'Help'
+    noRenew:
+      id: noRenew
+      sendTo: marketdata
+      conversations:
+        - Owner does not want to renew market, end of conversation!
 
-  notifyManagerReject: appOwners
-  notifyOwnerAccept: MarketData
-  notifyOwnerReject: MarketData
+    renewFAQ:
+      id: renewFAQ
+      sendTo: appOwner
+      conversations:
+        - Why renew is required? \nMarket data renew is required every year. \nLast renew information. \nLast time, the market data renew is performed on Jul. 2018 by Danny.\n For more information, please contact with marketdata
+    ManagerApprove:
+      id: ManagerApprove
+      sendTo: manager
+      conversations:
+        - BMO Approval required for license renew. \nplease enter 'Yes' for Approve, 'No' for Reject, or 'Help' for more information.
+
+    ManagerFAQ:
+      id: ManagerFAQ
+      sendTo: manager
+      conversations:
+        - Why renew is required? \nMarket data renew is required every year. \nLast renew information. \nLast time, the market data renew is performed on Jul. 2018 by Danny.\n For more information, please contact with marketdata
+    ManagerReject:
+      id: ManagerReject
+      sendTo: appOwner
+      conversations:
+        - License renew rejected by Manager.
+
+    notifyOwnerReject:
+      id: notifyOwnerReject
+      sendTo: appOwner
+      conversations:
+        - License renew is rejected.
+
+    BMOApprove:
+      id: BMOApprove
+      sendTo: bmo
+      conversations:
+        - License renew is aproved, please send out license separately to marketdata.
+
+    BMOReject:
+      id: BMOReject
+      sendTo: appOwner
+      conversations:
+        - License renew rejected by Manager.
+
+    BMOFAQ:
+      id: BMOFAQ
+      sendTo: appOwner
+      conversations:
+        - Why renew is required? \nMarket data renew is required every year. \nLast renew information. \nLast time, the market data renew is performed on Jul. 2018 by Danny.\n For more information, please contact with marketdata
+    notifyOwnerAccept:
+      id: notifyOwnerAccept
+      sendTo: appOwner
+      conversations:
+        - License renew is approved by Manager and BMO.
+    notifyManagerReject:
+      id: notifyManagerReject
+      sendTo: manager
+      conversations:
+        - License renew rejected by BMO. Please raise up to senior manager if you still want to renew.
