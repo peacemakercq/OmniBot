@@ -3,17 +3,24 @@ package org.innov8.tcb.lex;
 
 import com.google.common.collect.Lists;
 import com.sun.istack.internal.NotNull;
+import lombok.extern.log4j.Log4j2;
 import org.innov8.tcb.lex.entity.BotEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.lexmodelbuilding.LexModelBuildingClient;
 import software.amazon.awssdk.services.lexmodelbuilding.model.*;
+import software.amazon.awssdk.services.lexruntime.LexRuntimeClient;
+import software.amazon.awssdk.services.lexruntime.model.PostTextRequest;
+import software.amazon.awssdk.services.lexruntime.model.PostTextResponse;
+import software.amazon.awssdk.services.lexruntime.model.PutSessionResponse;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@Log4j2
 public class LexServiceImpl
 {
 
@@ -21,12 +28,15 @@ public class LexServiceImpl
     private LexModelBuildingClient lexModelBuildingClient;
 
 
-    public BotEntity getBotInfo(@NotNull final String botName, @NotNull final String botAlias)
+    @Autowired
+    private LexRuntimeClient lexRuntimeClient;
+
+
+    public GetBotResponse getBotInfo(@NotNull final String botName, @NotNull final String botAlias)
     {
-        GetBotResponse getResponse = lexModelBuildingClient
+        return lexModelBuildingClient
                 .getBot(builder -> builder.name(botName).versionOrAlias(botAlias));
 
-        return BotEntity.fromGetResponse(getResponse);
     }
 
 
@@ -52,6 +62,42 @@ public class LexServiceImpl
 
         return BotEntity.fromPutResponse(putBotResponse);
     }
+
+
+    public void postText()
+    {
+    }
+
+    public PutSessionResponse putSession(String slotToElicit)
+    {
+        ResponseInputStream<PutSessionResponse> inputStream = lexRuntimeClient.putSession(builder -> builder
+                .accept("text/plain; charset=utf-8")
+                .botAlias("DEV")
+
+                .botName("StartRenewalBot")
+                .userId("OminiBot")
+                .dialogAction(dialogActionBuilder -> dialogActionBuilder
+                        .intentName("StartRenewal")
+                        .messageFormat("PlainText")
+                        .slotToElicit(slotToElicit)
+                        .type("Delegate")
+                        .build())
+                .build());
+        return inputStream.response();
+    }
+
+
+    public PostTextResponse postText(String answer)
+    {
+        PostTextRequest postTextRequest = PostTextRequest.builder().botAlias("DEV")
+                .botName("StartRenewalBot")
+                .inputText(answer)
+                .userId("OminiBot").build();
+
+        log.info("Post text to Lex bot: {}", postTextRequest.inputText());
+        return lexRuntimeClient.postText(postTextRequest);
+    }
+
 
     private List<Slot> putSlotTypes(Map<String, List<EnumerationValue>> slotTypeMap)
     {

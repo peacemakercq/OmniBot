@@ -10,6 +10,7 @@ import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lexmodelbuilding.LexModelBuildingClient;
+import software.amazon.awssdk.services.lexruntime.LexRuntimeClient;
 
 @Configuration
 @EnableAutoConfiguration
@@ -33,7 +34,15 @@ public class BotBeanConfiguration
     @Bean
     public LexModelBuildingClient getLexModelBuildingClient()
     {
-        return LexModelBuildingClient.builder().region(Region.of(awsRegion)).httpClient(getSdkHttpClient()).build();
+        return LexModelBuildingClient.builder().region(Region.of(awsRegion))
+                .httpClient(getSdkHttpClient()).build();
+    }
+
+    @Bean
+    public LexRuntimeClient getLexRuntimeClient()
+    {
+        return LexRuntimeClient.builder().region(Region.of(awsRegion))
+                .httpClient(getSdkHttpClient()).build();
     }
 
 }
