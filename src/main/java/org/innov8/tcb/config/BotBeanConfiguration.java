@@ -1,10 +1,8 @@
-package org.innov8.tcb.common.spring;
+package org.innov8.tcb.config;
 
 
-import org.innov8.tcb.bot.ChatBot;
-import org.innov8.tcb.bot.impl.MockChatBot;
-import org.innov8.tcb.core.WorkflowController;
-import org.innov8.tcb.core.WorkflowService;
+import org.innov8.tcb.workflow.WorkflowServiceImpl;
+import org.innov8.tcb.workflow.WorkflowService;
 import org.innov8.tcb.lex.LexManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -56,12 +54,6 @@ public class BotBeanConfiguration
                 .httpClient(getSdkHttpClient()).build();
     }
 
-    @Bean(value = "MockChatBot", initMethod = "init")
-    public ChatBot getChatBot()
-    {
-        return new MockChatBot();
-    }
-
     @Bean(initMethod = "init")
     public LexManager getLexManager()
     {
@@ -77,6 +69,6 @@ public class BotBeanConfiguration
     @Bean("Workflow")
     public WorkflowService getWorkflow()
     {
-        return WorkflowController.getInstance();
+        return WorkflowServiceImpl.getInstance();
     }
 }

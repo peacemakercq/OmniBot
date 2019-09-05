@@ -1,4 +1,4 @@
-package org.innov8.tcb.core.conversation;
+package org.innov8.tcb.workflow.conversation;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ConversationEntity implements Conversation {
+public class ConversationImpl implements Conversation {
     private String id;
     private String sendTo;
     @Getter

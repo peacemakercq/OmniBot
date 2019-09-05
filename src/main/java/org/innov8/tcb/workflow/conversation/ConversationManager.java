@@ -1,4 +1,4 @@
-package org.innov8.tcb.core.conversation;
+package org.innov8.tcb.workflow.conversation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,9 +66,9 @@ public class ConversationManager {
             logger.warn("ConversationsFlow is not defined for flowType: {}", flowType);
             return null;
         }
-        Map<String, ConversationEntity> conversationMap = conversationsFlow.getConversationMap();
+        Map<String, ConversationImpl> conversationMap = conversationsFlow.getConversationMap();
 
-        List<ConversationEntity> lexEnabledConversation = conversationMap.values().stream().filter(conversationEntity -> !Objects.isNull(conversationEntity)
+        List<ConversationImpl> lexEnabledConversation = conversationMap.values().stream().filter(conversationEntity -> !Objects.isNull(conversationEntity)
                 && conversationEntity.isForLex()).collect(Collectors.toList());
 
         return lexEnabledConversation.isEmpty()? null : lexEnabledConversation.get(0);

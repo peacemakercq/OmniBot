@@ -1,4 +1,4 @@
-package org.innov8.tcb.core.state;
+package org.innov8.tcb.workflow.state;
 
 /**
  * Interface for State

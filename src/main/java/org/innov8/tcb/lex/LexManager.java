@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
 import org.innov8.tcb.bot.ChatBot;
-import org.innov8.tcb.core.WorkflowService;
+import org.innov8.tcb.workflow.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import software.amazon.awssdk.services.lexmodelbuilding.model.GetBotResponse;
 import software.amazon.awssdk.services.lexruntime.model.DialogState;
