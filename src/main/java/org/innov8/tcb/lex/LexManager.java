@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
 import org.innov8.tcb.bot.ChatBot;
-import org.innov8.tcb.workflow.Workflow;
+import org.innov8.tcb.core.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import software.amazon.awssdk.services.lexmodelbuilding.model.GetBotResponse;
 import software.amazon.awssdk.services.lexruntime.model.DialogState;
@@ -16,8 +16,8 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Log4j2
@@ -34,7 +34,7 @@ public class LexManager
     private LexServiceImpl lexService;
 
     @Autowired
-    private Workflow workflow;
+    private WorkflowService workflow;
 
     private Disposable subscription;
 
@@ -55,11 +55,11 @@ public class LexManager
             else
             {
                 chatBot.sendMessage(recipient, "Thank you for your support, have a nice day, Bye.");
-                Pair<Queue<String>, String> lexFulfillmentEntry = workflow.getLexFulfillmentEntry(flowType);
+                Pair<List<String>, String> lexFulfillmentEntry =
+                        workflow.getLexFulfillmentEntry(flowType);
 
                 Map<String, String> questionsAndAnswers = postTextResponse.slots();
-                workflow.startWorkflow(flowType, lexFulfillmentEntry.getValue(),
-                                       questionsAndAnswers);
+                workflow.startWorkflow(flowType, lexFulfillmentEntry.getValue(), questionsAndAnswers);
             }
         });
     }

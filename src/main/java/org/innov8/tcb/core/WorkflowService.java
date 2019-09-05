@@ -1,12 +1,17 @@
-package org.innov8.tcb.workflow;
+package org.innov8.tcb.core;
 
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
-public interface Workflow {
+/**
+ * This class is used to manage the flow for each session.
+ *
+ * Created by wangqi on 2019/9/4.
+ */
+public interface WorkflowService {
     /**
      * Initilaizes a workflow context
      *
@@ -14,8 +19,7 @@ public interface Workflow {
      * @param metadata the runtime data required to kick off this specific flow. It must contain all placeholder values in the corresponding workflow config.
      * @return a unique context ID of the running workflow
      */
-    String startWorkflow(String flowType, Map<String, ?> metadata);
-
+    String startWorkflow(String flowType, Map<String, Object> metadata);
 
     /**
      * Start a workflow at specific state context
@@ -41,8 +45,7 @@ public interface Workflow {
      * @param flowType the flow type to initialize
      * @return A tuple of the next entry after ReadyForFulfillment
      *         key is the FIFO queue of questions, the questions should be in sequence
-     *         value is the next flow name
+     *         value is the current state name(id)
      */
-    Pair<Queue<String>, String> getLexFulfillmentEntry(String flowType);
-
+    Pair<List<String>, String> getLexFulfillmentEntry(String flowType);
 }
