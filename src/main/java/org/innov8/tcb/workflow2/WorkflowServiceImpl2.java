@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Log4j2
 @Service
@@ -48,54 +48,55 @@ public class WorkflowServiceImpl2 implements WorkflowService
     {
         WorkflowContext workflowContext = contextMap.get(contextId);
         Step currentStep = workflowContext.getCurrentStep();
-        assert currentStep!=null;
+        if(currentStep == null) {
+            currentStep = getWorkflow(workflowContext).getEntranceStep();
+            workflowContext.setCurrentStep(currentStep);
+        } else {
+            // store previous question and answer into metadata
+            saveAnswer(workflowContext, condition);
+        }
 
-        List<String> questions = currentStep.getQuestions();
+        if(workflowContext.currentQuestionIndex>=0) {
+            workflowContext.currentConditions[workflowContext.currentQuestionIndex] = condition;
+        }
 
-        // store previous question and answer into metadata
-        saveAnswer(workflowContext, condition);
-
-
-
-        int nextQuestionIndex = workflowContext.currentQuestionIndex.incrementAndGet();
+        int nextQuestionIndex = ++workflowContext.currentQuestionIndex;
 
         // if presumed next question index is greater than questions size - 1
         // means we're out of questions, several things to do
 
+        List<String> questions = currentStep.getQuestions();
         if (nextQuestionIndex > questions.size() - 1)
         {
             // 1. reset question index to 0 for the next step
-            workflowContext.currentQuestionIndex.set(-1);
+            workflowContext.currentQuestionIndex = -1;
 
             // 2. judge if the input condition matches the condition of the current step
             List<NextStep> nextSteps = currentStep.getNextSteps();
 
             for(NextStep nextStep : nextSteps)
             {
-                if (matches(workflowContext.currentConditions, nextStep.getCondition()))
-                {
+                if (matches(workflowContext.currentConditions, nextStep.getCondition())) {
                     String name = nextStep.getName();
-                    Workflow workflow = workflowLoader.getWorkflows().get(workflowContext.flowName);
-                    Step forwardingStep = workflow.getSteps().get(name);
-                    workflowContext.currentStep = forwardingStep;
-                    String questionTemplate =
-                            forwardingStep.getQuestions().get(workflowContext.currentQuestionIndex.incrementAndGet());
+                    Step forwardingStep = getWorkflow(workflowContext).getSteps().get(name);
+                    if (forwardingStep != null) {
+                        workflowContext.setCurrentStep(forwardingStep);
+                        String questionTemplate =
+                                forwardingStep.getQuestions().get(++workflowContext.currentQuestionIndex);
 
-                    //TODO populate the placeholder
-                    String concreteQuestion = populateQuestion(questionTemplate, workflowContext);
+                        //TODO populate the placeholder
+                        String concreteQuestion = populateQuestion(questionTemplate, workflowContext);
 
-                    saveQuestion(workflowContext, concreteQuestion);
-                    //TODO clear // 3. reset conditions to empty
-                    return Pair.of(concreteQuestion, forwardingStep.getSendTo());
+                        saveQuestion(workflowContext, concreteQuestion);
+                        return Pair.of(concreteQuestion, forwardingStep.getSendTo());
+                    }
                 }
             }
 
         }
-        else
-        {
+        else {
             // 1. collect current condition
             // 2. get next question and sendTo, return Pair<question,recipient>
-            workflowContext.currentConditions[nextQuestionIndex] = condition;
             String recipient = currentStep.getSendTo();
             String questionTemplate = questions.get(nextQuestionIndex);
             String concreteQuestion = populateQuestion(questionTemplate, workflowContext);
@@ -121,18 +122,19 @@ public class WorkflowServiceImpl2 implements WorkflowService
 
     }
 
-    private boolean matches(String[] currentConditions, String conditionStr)
+    private boolean matches(String[] actualConditions, String configuredConfigStr)
     {
-        String[] conditions = conditionStr.split("\\|");
-        if (currentConditions.length != conditions.length)
+        String[] configuredConditions = configuredConfigStr.split("\\|");
+        if (actualConditions.length != configuredConditions.length)
         {
             log.error("Presumed conditions length does not match collected conditions");
-            return false;
+            throw new IllegalArgumentException("Please check your configured condition count!");
         }
 
-        for (int i = 0; i<conditions.length; i++)
+        for (int i = 0; i<configuredConditions.length; i++)
         {
-            if (!conditions[i].equalsIgnoreCase(currentConditions[i])) return false;
+            if (!configuredConditions[i].equalsIgnoreCase(actualConditions[i])
+            && !configuredConditions[i].equalsIgnoreCase("any")) return false;
         }
 
         return true;
@@ -145,13 +147,12 @@ public class WorkflowServiceImpl2 implements WorkflowService
     }
 
     @Getter
-    private static final class WorkflowContext
-    {
+    private static final class WorkflowContext {
         private String contextId;
         private String flowName;
-        private Map<String, ?> metadata;
+        private Map<String, ?> metadata = new HashMap<>();
         private Step currentStep;
-        private AtomicInteger currentQuestionIndex = new AtomicInteger(-1);
+        private int currentQuestionIndex = -1;
 
         /**
          * current condition for the current step
@@ -162,11 +163,21 @@ public class WorkflowServiceImpl2 implements WorkflowService
                                 Step currentStep) {
             this.contextId = typeName + UUID.randomUUID().toString();
             this.flowName = typeName;
-            this.metadata = metadata;
-            this.currentStep = currentStep;
-            this.currentConditions = currentStep == null ? null :
-                    new String[currentStep.getQuestions().size()];
+            if (metadata != null) {
+                this.metadata = metadata;
+            }
+            setCurrentStep(currentStep);
         }
 
+        private void setCurrentStep(Step step) {
+            if(step!=null) {
+                this.currentStep = step;
+                this.currentConditions = new String[currentStep.getQuestions().size()];
+            }
+        }
+    }
+
+    private Workflow getWorkflow(WorkflowContext context) {
+        return workflowLoader.getWorkflows().get(context.flowName);
     }
 }

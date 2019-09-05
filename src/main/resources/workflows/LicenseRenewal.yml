@@ -22,23 +22,23 @@ steps:
       - Can you access this license if required on another machine / another location (i.e. BCP site)?
     nextSteps:
       - name: scenario1
-        condition: any|any|any|any|any|Yes|any
+        condition: any|any|any|any|any|Yes
       - name: scenario2
-        condition: any|any|any|any|any|IDK|any
+        condition: any|any|any|any|any|IDK
       - name: getManagerApproval
-        condition: any|any|Yes|any|any|No|any
+        condition: any|any|Yes|any|any|No
       - name: getManagerApproval
-        condition: any|any|IDK|No|any|No|any
+        condition: any|any|IDK|No|any|No
       - name: scenario5
-        condition: any|any|IDK|Yes|any|No|any
+        condition: any|any|IDK|Yes|any|No
       - name: scenario6
-        condition: any|any|IDK|IDK|any|No|any
+        condition: any|any|IDK|IDK|any|No
       - name: getManagerApproval
-        condition: any|any|No|No|any|No|any
+        condition: any|any|No|No|any|No
       - name: scenario8
-        condition: any|any|No|Yes|any|No|any
+        condition: any|any|No|Yes|any|No
       - name: scenario9
-        condition: any|any|No|IDK|any|No|any
+        condition: any|any|No|IDK|any|No
 
   - name: scenario1
     sendTo: appOwner
