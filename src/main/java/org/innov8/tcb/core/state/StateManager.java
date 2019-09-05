@@ -3,6 +3,7 @@ package org.innov8.tcb.core.state;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -19,14 +20,14 @@ public class StateManager {
     private Logger logger = LogManager.getLogger();
 
     private volatile static StateManager instance;
-    private final String DEFAULT_OPTION = "DEFAULT_OPTION";
+    private final String DEFAULT_OPTION = "IDN";
     private StatesFlow statesFlow;
 
     private final String stateDefDirectory = System.getProperty("state.load.dir", "src/main/resources");
 
     private ConcurrentMap<String, StatesFlow> fileToFlowMap = new ConcurrentHashMap<>();
 
-    private Pattern pattern = Pattern.compile(" *(\\w+|\\[\\*]) *--> *(\\w+|\\[\\*]) *(:.*|)");
+    private final Pattern pattern = Pattern.compile(" *(\\w+|\\[\\*]) *--> *(\\w+|\\[\\*]) *(:.*|)");
     private StateManager() {
 
         File fileDirectory = new File(stateDefDirectory);
@@ -70,16 +71,17 @@ public class StateManager {
         return null;
     }
 
-    public State getNext(String filename, String currentStateId, String option) {
+    public State getNext(String filename, @NotNull String currentStateId, String option) {
         StatesFlow statesFlow = fileToFlowMap.get(filename);
         State state = statesFlow.getState(currentStateId);
         if (state == null) {
             return null;
         }
-        if (option == null || option.isEmpty()) {
-            option = DEFAULT_OPTION;
+        if (state.containOption(option)) {
+            return state.getNext(option);
         }
-        return state.getNext(option);
+        logger.warn("option \"{}\" does not exist for state {}, using default!", option, state.getId());
+        return state.getNext(DEFAULT_OPTION);
     }
 
     /**
@@ -88,7 +90,7 @@ public class StateManager {
      */
     private void loadStatesFlow(String stateFile) {
         logger.info("Loading file: {}", stateFile);
-        try (BufferedReader reader = new BufferedReader(new FileReader(stateFile))){
+        try (BufferedReader reader = new BufferedReader(new FileReader(stateDefDirectory.concat("/").concat(stateFile)))){
             String line;
             while ((line = reader.readLine()) != null) {
                 logger.debug("Loading line: {}", line);
@@ -125,7 +127,7 @@ public class StateManager {
         statesFlow.addState(nextId, nextState);
         State state = statesFlow.getState(id);
         if (state == null) {
-            System.out.println("Error! state is not definded yet! id={}" + id);
+            System.out.println("Error! state is not defined yet! id={}" + id);
             return;
         }
         state.addNext(option, nextState);
@@ -133,7 +135,7 @@ public class StateManager {
 
     private class FileFilter implements FilenameFilter {
         public boolean accept(File file, String fileName) {
-            Pattern pattern = Pattern.compile("//w+.puml");
+            Pattern pattern = Pattern.compile("\\w+.puml");
 
             return pattern.matcher(fileName).matches();
         }

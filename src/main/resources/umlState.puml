@@ -4,7 +4,7 @@
     [*] --> RenewStart
     RenewStart --> doRenew : Yes
     RenewStart --> noRenew : No
-    RenewStart --> renewFAQ : Others
+    RenewStart --> renewFAQ : IDN
 
     note left of RenewStart : Do you want to renew license? please enter 'Yes', 'No', or 'Help'
 
@@ -13,7 +13,7 @@
 
     doRenew --> ManagerApprove : Yes
     doRenew --> ManagerReject : No
-    doRenew --> ManagerFAQ : Others
+    doRenew --> ManagerFAQ : IDN
 
     note left of doRenew
         Manager Approval required for license renew.
@@ -32,7 +32,7 @@
 
     ManagerApprove --> BMOApprove : Yes
     ManagerApprove --> BMOReject : No
-    ManagerApprove --> BMOFAQ : Others
+    ManagerApprove --> BMOFAQ : IDN
 
     note left of ManagerApprove : BMO Approval required for license renew.
 

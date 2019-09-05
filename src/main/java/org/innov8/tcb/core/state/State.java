@@ -9,4 +9,5 @@ public interface State {
     String getId();
     boolean addNext(String option, State nextState);
     State getNext(String option);
+    boolean containOption(String option);
 }

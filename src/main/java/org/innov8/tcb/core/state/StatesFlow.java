@@ -21,6 +21,8 @@ public class StatesFlow {
     StatesFlow(String stateFile) {
 
         this.stateFile = stateFile;
+        states.put("startBot", rootState);
+        states.put("endBot", endState);
     }
 
     State getState(String id) {
