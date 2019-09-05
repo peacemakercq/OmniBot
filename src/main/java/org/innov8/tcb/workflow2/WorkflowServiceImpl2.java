@@ -26,8 +26,8 @@ public class WorkflowServiceImpl2 implements WorkflowService
 
     @Override
     public String initializeWorkflow(@NotNull String flowName, Map<String, ?> metadata,
-                                     boolean startFromLex)
-    {
+                                     boolean startFromLex) {
+        log.info("initialize " + flowName + ", startFromLex=" + startFromLex + ", metadata=" + (metadata != null ? metadata.toString() : ""));
         Workflow workflow = workflowLoader.getWorkflows().get(flowName);
         Step currentStep = workflow.getLexStep();
         WorkflowContext workflowContext = new WorkflowContext(flowName, metadata, startFromLex ?
@@ -44,11 +44,13 @@ public class WorkflowServiceImpl2 implements WorkflowService
     }
 
     @Override
-    public Pair<String, String> nextStep(String contextId, String condition)
-    {
+    public Pair<String, String> nextStep(String contextId, String condition) {
         WorkflowContext workflowContext = contextMap.get(contextId);
+        log.info("Context " + contextId + " is trying yo move from " +
+                (workflowContext != null && workflowContext.currentStep != null ? workflowContext.currentStep.getName() : "") +
+                " to next state with: " + condition);
         Step currentStep = workflowContext.getCurrentStep();
-        if(currentStep == null) {
+        if (currentStep == null) {
             currentStep = getWorkflow(workflowContext).getEntranceStep();
             workflowContext.setCurrentStep(currentStep);
         } else {
@@ -56,7 +58,7 @@ public class WorkflowServiceImpl2 implements WorkflowService
             saveAnswer(workflowContext, condition);
         }
 
-        if(workflowContext.currentQuestionIndex>=0) {
+        if (workflowContext.currentQuestionIndex >= 0) {
             workflowContext.currentConditions[workflowContext.currentQuestionIndex] = condition;
         }
 
@@ -66,16 +68,14 @@ public class WorkflowServiceImpl2 implements WorkflowService
         // means we're out of questions, several things to do
 
         List<String> questions = currentStep.getQuestions();
-        if (nextQuestionIndex > questions.size() - 1)
-        {
+        if (nextQuestionIndex > questions.size() - 1) {
             // 1. reset question index to 0 for the next step
             workflowContext.currentQuestionIndex = -1;
 
             // 2. judge if the input condition matches the condition of the current step
             List<NextStep> nextSteps = currentStep.getNextSteps();
 
-            for(NextStep nextStep : nextSteps)
-            {
+            for (NextStep nextStep : nextSteps) {
                 if (matches(workflowContext.currentConditions, nextStep.getCondition())) {
                     String name = nextStep.getName();
                     Step forwardingStep = getWorkflow(workflowContext).getSteps().get(name);
@@ -88,13 +88,13 @@ public class WorkflowServiceImpl2 implements WorkflowService
                         String concreteQuestion = populateQuestion(questionTemplate, workflowContext);
 
                         saveQuestion(workflowContext, concreteQuestion);
+                        log.info("Context " + contextId + " is sending next question: " + concreteQuestion + " to " + forwardingStep.getSendTo());
                         return Pair.of(concreteQuestion, forwardingStep.getSendTo());
                     }
                 }
             }
 
-        }
-        else {
+        } else {
             // 1. collect current condition
             // 2. get next question and sendTo, return Pair<question,recipient>
             String recipient = currentStep.getSendTo();
@@ -103,8 +103,11 @@ public class WorkflowServiceImpl2 implements WorkflowService
             saveQuestion(workflowContext, concreteQuestion);
             return Pair.of(concreteQuestion, recipient);
         }
+        // could be
+        // can't find next step
+        // can't parse answer
+        // finish the whole flow
         return null;
-
     }
 
     private void saveQuestion(WorkflowContext workflowContext, String concreateQuestion)

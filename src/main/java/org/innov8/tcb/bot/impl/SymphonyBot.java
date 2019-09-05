@@ -33,6 +33,7 @@ public class SymphonyBot implements ChatBot, IMListener {
     @Override
     public String sendMessage(String who, String message) {
         try {
+            log.info("Sending symphony message: " + message + " to " + who);
             UserInfo userInfo = symBotClient.getUsersClient().getUserFromEmail(who, false);
             String streamId = symBotClient.getStreamsClient().getUserIMStreamId(userInfo.getId());
             OutboundMessage outboundMessage = new OutboundMessage();
