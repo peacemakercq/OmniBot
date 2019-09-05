@@ -20,7 +20,7 @@ public class SymphonyBotTests {
     @Test
     @Ignore("integration test.")
     public void testSendMessage() {
-        String reply = bot.sendMessage("andyleecm@gmail.com", "i'm bot...");
+        String reply = bot.sendMessage("jbgray@btinternet.com", "i'm bot...");
         assertEquals("hi", reply);
     }
 
@@ -28,7 +28,7 @@ public class SymphonyBotTests {
     @Ignore("integration test.")
     public void testReceiveMessage() {
         bot.incomingMessage().subscribe(p -> {
-            assertEquals("andyleecm@gmail.com", p.getKey());
+            assertEquals("jbgray@btinternet.com", p.getKey());
             assertEquals("yeah", p.getValue());
         });
     }
