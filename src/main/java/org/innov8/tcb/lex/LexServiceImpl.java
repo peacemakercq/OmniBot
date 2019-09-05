@@ -2,10 +2,10 @@ package org.innov8.tcb.lex;
 
 
 import com.google.common.collect.Lists;
-import com.sun.istack.internal.NotNull;
 import lombok.extern.log4j.Log4j2;
 import org.innov8.tcb.lex.entity.BotEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.lexmodelbuilding.LexModelBuildingClient;
@@ -31,8 +31,17 @@ public class LexServiceImpl
     @Autowired
     private LexRuntimeClient lexRuntimeClient;
 
+    @Value("${lex.bot.name}")
+    private String botName;
 
-    public GetBotResponse getBotInfo(@NotNull final String botName, @NotNull final String botAlias)
+    @Value("${lex.bot.alias}")
+    private String botAlias;
+
+    @Value("${user.id}")
+    private String userId;
+
+
+    public GetBotResponse getBotInfo(final String botName, final String botAlias)
     {
         return lexModelBuildingClient
                 .getBot(builder -> builder.name(botName).versionOrAlias(botAlias));
@@ -64,9 +73,6 @@ public class LexServiceImpl
     }
 
 
-    public void postText()
-    {
-    }
 
     public PutSessionResponse putSession(String slotToElicit)
     {
@@ -87,12 +93,12 @@ public class LexServiceImpl
     }
 
 
-    public PostTextResponse postText(String answer)
+    public PostTextResponse postText(String message)
     {
-        PostTextRequest postTextRequest = PostTextRequest.builder().botAlias("DEV")
-                .botName("StartRenewalBot")
-                .inputText(answer)
-                .userId("OminiBot").build();
+        PostTextRequest postTextRequest = PostTextRequest.builder().botAlias(botAlias)
+                .botName(botName)
+                .inputText(message)
+                .userId(userId).build();
 
         log.info("Post text to Lex bot: {}", postTextRequest.inputText());
         return lexRuntimeClient.postText(postTextRequest);

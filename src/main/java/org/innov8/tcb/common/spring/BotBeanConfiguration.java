@@ -1,6 +1,9 @@
 package org.innov8.tcb.common.spring;
 
 
+import org.innov8.tcb.bot.ChatBot;
+import org.innov8.tcb.bot.impl.MockChatBot;
+import org.innov8.tcb.lex.LexManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -12,12 +15,18 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lexmodelbuilding.LexModelBuildingClient;
 import software.amazon.awssdk.services.lexruntime.LexRuntimeClient;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 @Configuration
 @EnableAutoConfiguration
 public class BotBeanConfiguration
 {
     @Value("${aws.region}")
     private String awsRegion;
+
+    @Value("${chatbot.executor.coresize}")
+    private int coreSize;
 
     @Bean
     public ProxyConfiguration getProxyConfiguration()
@@ -45,4 +54,21 @@ public class BotBeanConfiguration
                 .httpClient(getSdkHttpClient()).build();
     }
 
+    @Bean(value = "MockChatBot", initMethod = "init")
+    public ChatBot getChatBot()
+    {
+        return new MockChatBot();
+    }
+
+    @Bean(initMethod = "init")
+    public LexManager getLexManager()
+    {
+        return new LexManager();
+    }
+
+    @Bean("ChatBotExecutor")
+    public ScheduledExecutorService chatBotExecutor()
+    {
+        return Executors.newScheduledThreadPool(coreSize);
+    }
 }
