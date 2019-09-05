@@ -26,6 +26,7 @@ public class StateManagerTest {
         // todo add more test cases
         assertNext("renewFAQ", "xxx", "RenewStart");
         assertNext("doRenew", "dx", "ManagerFAQ");
+        assertNext("doRenew", "dx", "ManagerFAQ");
     }
     private void assertNext(String id, String option, String expectation) {
         State nextState = instance.getNext(filename, id, option);

@@ -1,43 +1,30 @@
 package org.innov8.tcb.core.conversation;
 
-import javafx.util.Pair;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ConversationEntity implements Entity{
+public class ConversationEntity implements Conversation {
     private String id;
     private String sendTo;
-    private List<String> conversations = new ArrayList<>();
+    private List<String> questions = new ArrayList<>();
 
     public String getSendTo() {
         return sendTo;
-    }
-
-    private int index = 0;
-    @Override
-    public Pair<String, String> getNext() {
-        if (conversations.size() >= index) {
-            index = 0;
-            return null;
-        }
-        String question = conversations.get(index++);
-        return new Pair<>(sendTo, question);
     }
 
     public void setSendTo(String sendTo) {
         this.sendTo = sendTo;
     }
 
-    public List<String> getConversations() {
-        return conversations;
+    public List<String> getQuestions() {
+        return questions;
     }
 
-    public void setConversations(List<String> conversations) {
-        this.conversations = conversations;
+    public void setQuestions(List<String> questions) {
+        this.questions = questions;
     }
 
     public String getId() {
@@ -48,6 +35,7 @@ public class ConversationEntity implements Entity{
         this.id = id;
     }
     public String toString() {
-        return "\nid: " + id + ", sendTo: " + sendTo + ", Conversation: " + conversations;
+        return "\nid: " + id + ", sendTo: " + sendTo + ", Conversation: " + questions;
     }
+
 }

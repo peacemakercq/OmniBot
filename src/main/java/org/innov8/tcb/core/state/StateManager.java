@@ -3,7 +3,6 @@ package org.innov8.tcb.core.state;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -71,7 +70,7 @@ public class StateManager {
         return null;
     }
 
-    public State getNext(String filename, @NotNull String currentStateId, String option) {
+    public State getNext(String filename, String currentStateId, String option) {
         StatesFlow statesFlow = fileToFlowMap.get(filename);
         State state = statesFlow.getState(currentStateId);
         if (state == null) {
@@ -80,7 +79,7 @@ public class StateManager {
         if (state.containOption(option)) {
             return state.getNext(option);
         }
-        logger.warn("option \"{}\" does not exist for state {}, using default!", option, state.getId());
+        logger.debug("option \"{}\" does not exist for state {}, using default!", option, state.getId());
         return state.getNext(DEFAULT_OPTION);
     }
 

@@ -1,10 +1,11 @@
 
 conversationmanager:
+  flowType: umlState
   conversationMap:
     RenewStart:
       id: RenewStart
       sendTo: appOwner
-      conversations:
+      questions:
         - Do you want to renew {d:license}?\n{d:pre_defined_info}
         - How often do you use the application that you wish to renew license for?
         - Are you the only person in your team whom require access to the application you wish to have license renewed?
@@ -15,66 +16,66 @@ conversationmanager:
     doRenew:
       id: doRenew
       sendTo: manager
-      conversations:
+      questions:
         - Manager Approval required for license renew.\nplease enter 'Yes', 'No', or 'Help'
     noRenew:
       id: noRenew
       sendTo: marketdata
-      conversations:
+      questions:
         - Owner does not want to renew market, end of conversation!
 
     renewFAQ:
       id: renewFAQ
       sendTo: appOwner
-      conversations:
+      questions:
         - Why renew is required? \nMarket data renew is required every year. \nLast renew information. \nLast time, the market data renew is performed on Jul. 2018 by Danny.\n For more information, please contact with marketdata
     ManagerApprove:
       id: ManagerApprove
       sendTo: manager
-      conversations:
+      questions:
         - BMO Approval required for license renew. \nplease enter 'Yes' for Approve, 'No' for Reject, or 'Help' for more information.
 
     ManagerFAQ:
       id: ManagerFAQ
       sendTo: manager
-      conversations:
+      questions:
         - Why renew is required? \nMarket data renew is required every year. \nLast renew information. \nLast time, the market data renew is performed on Jul. 2018 by Danny.\n For more information, please contact with marketdata
     ManagerReject:
       id: ManagerReject
       sendTo: appOwner
-      conversations:
+      questions:
         - License renew rejected by Manager.
 
     notifyOwnerReject:
       id: notifyOwnerReject
       sendTo: appOwner
-      conversations:
+      questions:
         - License renew is rejected.
 
     BMOApprove:
       id: BMOApprove
       sendTo: bmo
-      conversations:
+      questions:
         - License renew is aproved, please send out license separately to marketdata.
 
     BMOReject:
       id: BMOReject
       sendTo: appOwner
-      conversations:
+      questions:
         - License renew rejected by Manager.
 
     BMOFAQ:
       id: BMOFAQ
       sendTo: appOwner
-      conversations:
+      questions:
         - Why renew is required? \nMarket data renew is required every year. \nLast renew information. \nLast time, the market data renew is performed on Jul. 2018 by Danny.\n For more information, please contact with marketdata
     notifyOwnerAccept:
       id: notifyOwnerAccept
       sendTo: appOwner
-      conversations:
+      questions:
         - License renew is approved by Manager and BMO.
     notifyManagerReject:
       id: notifyManagerReject
       sendTo: manager
-      conversations:
+      questions:
         - License renew rejected by BMO. Please raise up to senior manager if you still want to renew.
