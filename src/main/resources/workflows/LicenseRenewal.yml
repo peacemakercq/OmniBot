@@ -1,10 +1,19 @@
 steps:
-  - name: questionnaire
-    forLex: true
+  - name: notification
     isEntrance: true
     sendTo: appOwner
     questions:
       - Do you want to renew {d:license}?\n{d:pre_defined_info}
+    nextSteps:
+      - name: questionnaire
+        condition: Yes
+      - name: "[*]"
+        condition: any
+
+  - name: questionnaire
+    forLex: true
+    sendTo: appOwner
+    questions:
       - How often do you use the application that you wish to renew license for?
       - Are you the only person in your team whom require access to the application you wish to have license renewed?
       - Is it possible to use a shared account to access the application you wish to have license renewed?
@@ -12,17 +21,101 @@ steps:
       - Are there any workaround you can source the same information you require without using the application you are requesting for license renewal?
       - Can you access this license if required on another machine / another location (i.e. BCP site)?
     nextSteps:
+      - name: scenario1
+        condition: any|any|any|any|any|Yes|any
+      - name: scenario2
+        condition: any|any|any|any|any|IDK|any
       - name: getManagerApproval
-        condition: yes
+        condition: any|any|Yes|any|any|No|any
+      - name: getManagerApproval
+        condition: any|any|IDK|No|any|No|any
+      - name: scenario5
+        condition: any|any|IDK|Yes|any|No|any
+      - name: scenario6
+        condition: any|any|IDK|IDK|any|No|any
+      - name: getManagerApproval
+        condition: any|any|No|No|any|No|any
+      - name: scenario8
+        condition: any|any|No|Yes|any|No|any
+      - name: scenario9
+        condition: any|any|No|IDK|any|No|any
+
+  - name: scenario1
+    sendTo: appOwner
+    questions:
+      - You can consider utilizing the work around to source the info.\n Do you still wish to proceed with this license renewal request?
+    nextSteps:
+      - name: getManagerApproval
+        condition: Yes
       - name: "[*]"
-        condition: no
+        condition: any
+
+  - name: scenario2
+    sendTo: appOwner
+    questions:
+      - You can consider to find out possible workaround to source the info.\n Do you still wish to proceed with this license renewal request?
+    nextSteps:
+      - name: getManagerApproval
+        condition: Yes
+      - name: "[*]"
+        condition: any
+
+  - name: scenario5
+    sendTo: appOwner
+    questions:
+      - You can consider utilizing a shared account to source the info.\n Do you still wish to proceed with this license renewal request?
+    nextSteps:
+      - name: getManagerApproval
+        condition: Yes
+      - name: "[*]"
+        condition: any
+
+  - name: scenario6
+    sendTo: appOwner
+    questions:
+      - You can explore possibility to utilize a shared account if available.\n Do you still wish to proceed with this license renewal request?
+    nextSteps:
+      - name: getManagerApproval
+        condition: Yes
+      - name: "[*]"
+        condition: any
+
+  - name: scenario8
+    sendTo: appOwner
+    questions:
+      - You can consider utilizing a shared account to source the info.\n Do you still wish to proceed with this license renewal request?
+    nextSteps:
+      - name: getManagerApproval
+        condition: Yes
+      - name: "[*]"
+        condition: any
+
+  - name: scenario9
+    sendTo: appOwner
+    questions:
+      - You can explore possibility to utilize a shared account if available.\n Do you still wish to proceed with this license renewal request?
+    nextSteps:
+      - name: getManagerApproval
+        condition: Yes
+      - name: "[*]"
+        condition: any
 
   - name: getManagerApproval
     sendTo: manager
     questions:
-      - Please approve ...
+      - Please approve {d:user}'s request to renew {d:license}\n{q:questionnaire[0]}-{a:questionaire[0]}
     nextSteps:
       - name: getBMOApproval
         condition: yes
-      - name: Chehe
+      - name: "[*]"
+        condition: no
+
+  - name: getBMOApproval
+    sendTo: BMO
+    questions:
+      - Please review license renewal request {d:pre_defined_info}
+    nextSteps:
+      - name: "[*]"
+        condition: yes
+      - name: "[*]"
         condition: no
