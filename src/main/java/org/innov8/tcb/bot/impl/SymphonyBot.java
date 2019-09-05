@@ -1,4 +1,4 @@
-package org.innov8.tcb.bot;
+package org.innov8.tcb.bot.impl;
 
 import clients.SymBotClient;
 import io.reactivex.rxjava3.core.Observable;
@@ -11,9 +11,9 @@ import model.InboundMessage;
 import model.OutboundMessage;
 import model.Stream;
 import model.UserInfo;
+import org.innov8.tcb.bot.ChatBot;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +25,6 @@ public class SymphonyBot implements ChatBot, IMListener {
 
     private PublishSubject<Pair<String, String>> incomingMessages;
 
-    @PostConstruct
     public void init() {
         incomingMessages = PublishSubject.create();
         symBotClient.getDatafeedEventsService().addIMListener(this);

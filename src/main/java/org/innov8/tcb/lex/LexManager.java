@@ -27,7 +27,7 @@ public class LexManager
     @Resource(name = "ChatBotExecutor")
     private ScheduledExecutorService scheduledExecutorService;
 
-    @Resource(name = "MockChatBot")
+    @Resource(name = "SymphonyBot")
     private ChatBot chatBot;
 
     @Autowired
@@ -54,6 +54,7 @@ public class LexManager
             }
             else
             {
+                chatBot.sendMessage(recipient, "Thank you for your support, have a nice day, Bye.");
                 Pair<Queue<String>, String> lexFulfillmentEntry = workflow.getLexFulfillmentEntry(flowType);
 
                 Map<String, String> questionsAndAnswers = postTextResponse.slots();
