@@ -1,8 +1,8 @@
 package org.innov8.tcb.bot.impl;
 
 import io.reactivex.rxjava3.core.Observable;
-import javafx.util.Pair;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.tuple.Pair;
 import org.innov8.tcb.bot.ChatBot;
 import org.innov8.tcb.lex.LexServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

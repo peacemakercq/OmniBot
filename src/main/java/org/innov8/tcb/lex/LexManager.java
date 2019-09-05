@@ -2,8 +2,8 @@ package org.innov8.tcb.lex;
 
 
 import io.reactivex.rxjava3.disposables.Disposable;
-import javafx.util.Pair;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.tuple.Pair;
 import org.innov8.tcb.bot.ChatBot;
 import org.innov8.tcb.workflow.Workflow;
 import org.springframework.beans.factory.annotation.Autowired;

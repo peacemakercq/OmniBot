@@ -1,7 +1,7 @@
 package org.innov8.tcb.bot;
 
 import io.reactivex.rxjava3.core.Observable;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 
 public interface ChatBot {
     /**

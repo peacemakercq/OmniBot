@@ -3,7 +3,6 @@ package org.innov8.tcb.bot.impl;
 import clients.SymBotClient;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
-import javafx.util.Pair;
 import listeners.IMListener;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
@@ -11,6 +10,7 @@ import model.InboundMessage;
 import model.OutboundMessage;
 import model.Stream;
 import model.UserInfo;
+import org.apache.commons.lang3.tuple.Pair;
 import org.innov8.tcb.bot.ChatBot;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -61,7 +61,7 @@ public class SymphonyBot implements ChatBot, IMListener {
 
     @Override
     public void onIMMessage(InboundMessage message) {
-        incomingMessages.onNext(new Pair<>(
+        incomingMessages.onNext(Pair.of(
                 message.getUser().getEmail(),
                 message.getMessageText()));
     }

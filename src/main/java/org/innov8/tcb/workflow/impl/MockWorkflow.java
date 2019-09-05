@@ -1,6 +1,6 @@
 package org.innov8.tcb.workflow.impl;
 
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.innov8.tcb.workflow.Workflow;
 
 import java.util.Map;
