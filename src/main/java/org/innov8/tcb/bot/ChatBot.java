@@ -1,6 +1,7 @@
 package org.innov8.tcb.bot;
 
 import io.reactivex.rxjava3.core.Observable;
+import javafx.util.Pair;
 
 public interface ChatBot {
     /**
@@ -15,7 +16,7 @@ public interface ChatBot {
     /**
      * Gets the incoming message Observable.
      *
-     * @return the incoming message Observable
+     * @return the observable stream containing the a pair of <Who, Message>
      */
-    Observable<String> incomingMessage();
+    Observable<Pair<String, String>> incomingMessage();
 }
