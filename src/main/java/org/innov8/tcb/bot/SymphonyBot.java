@@ -1,7 +1,6 @@
 package org.innov8.tcb.bot;
 
 import clients.SymBotClient;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import javafx.util.Pair;
