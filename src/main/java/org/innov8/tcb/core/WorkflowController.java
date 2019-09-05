@@ -9,6 +9,7 @@ import org.innov8.tcb.core.state.State;
 import org.innov8.tcb.core.state.StateManager;
 
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -55,6 +56,12 @@ public class WorkflowController implements WorkflowService {
     }
 
     @Override
+    public String startWorkflow(String flowType, String nextState, Map<String, ?> metadata)
+    {
+        return null;
+    }
+
+    @Override
     public Pair<String, String> nextState(String contextId, String response) {
 
         if (contextId == null || contextId.isEmpty() || ! contextMap.containsKey(contextId)) {
@@ -78,6 +85,12 @@ public class WorkflowController implements WorkflowService {
         context.currentStateId = nextStateId;
         context.conversation = ConversationManager.getInstance().getConversation(context.flowType, nextStateId);
         return context.getNext();
+    }
+
+    @Override
+    public org.apache.commons.lang3.tuple.Pair<Queue<String>, String> getLexFulfillmentEntry(String flowType)
+    {
+        return null;
     }
 
     public void printContextCacheForId(String contextId) {

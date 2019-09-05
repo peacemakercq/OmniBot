@@ -3,9 +3,9 @@ package org.innov8.tcb.common.spring;
 
 import org.innov8.tcb.bot.ChatBot;
 import org.innov8.tcb.bot.impl.MockChatBot;
+import org.innov8.tcb.core.WorkflowController;
+import org.innov8.tcb.core.WorkflowService;
 import org.innov8.tcb.lex.LexManager;
-import org.innov8.tcb.workflow.Workflow;
-import org.innov8.tcb.workflow.impl.MockWorkflow;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -74,9 +74,9 @@ public class BotBeanConfiguration
         return Executors.newScheduledThreadPool(coreSize);
     }
 
-    @Bean("MockWorkflow")
-    public Workflow getWorkflow()
+    @Bean("Workflow")
+    public WorkflowService getWorkflow()
     {
-        return new MockWorkflow();
+        return WorkflowController.getInstance();
     }
 }
