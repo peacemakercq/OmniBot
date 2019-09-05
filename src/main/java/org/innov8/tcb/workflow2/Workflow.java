@@ -18,13 +18,19 @@ public class Workflow {
     private Step entranceStep;
 
     /**
+     * the step can be used by Lex
+     */
+    private Step lexStep;
+
+    /**
      * step name - Step
      */
     private Map<String, Step> steps;
 
     public static Workflow from(List<Step> steps) {
         Step entranceStep = steps.stream().filter(Step::isEntrance).findFirst().get();
+        Step lexStep = steps.stream().filter(Step::isForLex).findFirst().get();
         Map<String, Step> stepMap = steps.stream().collect(Collectors.toMap(Step::getName, s -> s));
-        return new Workflow(entranceStep, stepMap);
+        return new Workflow(entranceStep, lexStep, stepMap);
     }
 }

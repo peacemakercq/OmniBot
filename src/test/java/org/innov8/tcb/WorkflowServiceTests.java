@@ -3,6 +3,7 @@ package org.innov8.tcb;
 import org.apache.commons.lang3.tuple.Pair;
 import org.innov8.tcb.workflow2.WorkflowLoader;
 import org.innov8.tcb.workflow2.WorkflowService;
+import org.innov8.tcb.workflow2.WorkflowServiceImpl2;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {WorkflowLoader.class, WorkflowService.class})
+@SpringBootTest(classes = {WorkflowLoader.class, WorkflowServiceImpl2.class})
 public class WorkflowServiceTests {
 
     private static final String TEST_FLOW = "LicenseRenewal";

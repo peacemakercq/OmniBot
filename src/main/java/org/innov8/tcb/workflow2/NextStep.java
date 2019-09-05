@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class NextStep {
     @JsonProperty
-    String name;
+    private String name;
     @JsonProperty
-    String condition;
+    private String condition;
 }

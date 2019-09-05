@@ -18,22 +18,15 @@ public interface WorkflowService
      *
      * @param flowName the flow type to initialize
      * @param metadata the runtime data required to kick off this specific flow. It must contain all placeholder values in the corresponding workflow config.
+     * @param startFromLex flag to indicate if the flow is kick by Lex
      * @return a unique context ID of the running workflow
      */
-    String initializeWorkflow(String flowName, Map<String, Object> metadata);
+    String initializeWorkflow(String flowName, Map<String, ?> metadata, boolean startFromLex);
+
+    String initializeWorkflow(String flowName, Map<String, ?> metadata);
 
     /**
-     * Initialize a workflow at specific state context
-     *
-     * @param flowName the flow type to initialize
-     * @param nextState the first state should be start
-     * @param metadata the runtime data required to kick off this specific flow. It must contain all placeholder values in the corresponding workflow config.
-     * @return a unique context ID of the running workflow
-     */
-    String initializeWorkflow(String flowName, String nextState, Map<String, ?> metadata);
-
-    /**
-     * Moves to next workflow state by the given transition
+     * Moves to next workflow step by the given condition
      *
      * @param contextId  the context ID of the running workflow to manipulate on
      * @param condition the transition which determines the next state

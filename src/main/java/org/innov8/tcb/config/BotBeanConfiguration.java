@@ -1,8 +1,6 @@
 package org.innov8.tcb.config;
 
 
-import org.innov8.tcb.workflow.WorkflowServiceImpl;
-import org.innov8.tcb.workflow.WorkflowService;
 import org.innov8.tcb.lex.LexManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -66,9 +64,4 @@ public class BotBeanConfiguration
         return Executors.newScheduledThreadPool(coreSize);
     }
 
-    @Bean("Workflow")
-    public WorkflowService getWorkflow()
-    {
-        return WorkflowServiceImpl.getInstance();
-    }
 }
