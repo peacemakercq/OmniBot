@@ -6,7 +6,7 @@ import clients.SymBotClient;
 import configuration.SymConfig;
 import configuration.SymConfigLoader;
 import org.innov8.tcb.bot.ChatBot;
-import org.innov8.tcb.bot.SymphonyBot;
+import org.innov8.tcb.bot.impl.SymphonyBot;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -29,6 +29,7 @@ public class SymphonyBotConfig {
     }
 
     @Bean
+    @Lazy
     public SymBotClient symBotClient(SymConfig config) {
         ISymAuth botAuth = new SymBotRSAAuth(config);
         botAuth.authenticate();
@@ -37,8 +38,8 @@ public class SymphonyBotConfig {
         return botClient;
     }
 
-    @Bean("SymphonyBot")
-    public ChatBot symphonyBot() {
-        return new SymphonyBot();
-    }
+   @Bean(value = "SymphonyBot", initMethod = "init")
+   public ChatBot symphonyBot() {
+      return new SymphonyBot();
+   }
 }
