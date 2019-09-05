@@ -5,9 +5,11 @@ import authentication.SymBotRSAAuth;
 import clients.SymBotClient;
 import configuration.SymConfig;
 import configuration.SymConfigLoader;
+import org.innov8.tcb.bot.ChatBot;
 import org.innov8.tcb.bot.SymphonyBot;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -35,8 +37,8 @@ public class SymphonyBotConfig {
         return botClient;
     }
 
-   @Bean
-   public SymphonyBot symphonyBot() {
-      return new SymphonyBot();
-   }
+    @Bean("SymphonyBot")
+    public ChatBot symphonyBot() {
+        return new SymphonyBot();
+    }
 }

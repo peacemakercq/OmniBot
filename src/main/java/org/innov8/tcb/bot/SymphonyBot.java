@@ -43,7 +43,7 @@ public class SymphonyBot implements ChatBot, IMListener {
             StringBuilder sb = new StringBuilder();
             CountDownLatch cdl = new CountDownLatch(1);
             var subscription = incomingMessages.subscribe(s -> {
-                sb.append(s);
+                sb.append(s.getValue());
                 cdl.countDown();
             });
             cdl.await(30, TimeUnit.SECONDS);
