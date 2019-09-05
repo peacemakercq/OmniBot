@@ -1,33 +1,53 @@
 package org.innov8.tcb.core.state;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
 /**
- * Manage the states
+ * Manage the statesFlow
  * Created by wangqi on 2019/9/3.
  */
 public class StateManager {
+    private Logger logger = LogManager.getLogger();
+
     private volatile static StateManager instance;
     private final String DEFAULT_OPTION = "DEFAULT_OPTION";
-    private State rootState = new BotState("startBot");
-    private State endState = new BotState("endBot");
-    private ConcurrentMap<String, State> states = new ConcurrentHashMap<>();
+    private StatesFlow statesFlow;
+
+    private final String stateDefDirectory = System.getProperty("state.load.dir", "src/main/resources");
+
+    private ConcurrentMap<String, StatesFlow> fileToFlowMap = new ConcurrentHashMap<>();
 
     private Pattern pattern = Pattern.compile(" *(\\w+|\\[\\*]) *--> *(\\w+|\\[\\*]) *(:.*|)");
     private StateManager() {
 
+        File fileDirectory = new File(stateDefDirectory);
+        FileFilter filter = new FileFilter();
+        String[] files = fileDirectory.list(filter);
+        if (files != null && files.length > 0) {
+            for (String file : files) {
+                try {
+                    statesFlow = new StatesFlow(file);
+                    loadStatesFlow(file);
+                    fileToFlowMap.put(file, statesFlow);
+                } catch (Exception e) {
+                    logger.error("Failed to load statesFlowOld from file: {}", file);
+                }
+            }
+        }
+        statesFlow = null;
+    }
 
-        parseLine("[*] --> RenewStart");
-        parseLine("RenewStart --> doRenew : Yes");
-        parseLine("RenewStart --> noRenew : No");
-        parseLine("RenewStart --> renewFAQ : Others");
-        parseLine("renewFAQ --> RenewStart");
-        parseLine("doRenew --> [*]");
-        parseLine("noRenew --> [*]");
-
-        System.out.println("States: " + states);
+    public String getStateDefDirectory() {
+        return stateDefDirectory;
     }
 
     public static StateManager getInstance() {
@@ -41,11 +61,50 @@ public class StateManager {
         return instance;
     }
 
+    public State getRootState(String filename) {
+        StatesFlow statesFlow = fileToFlowMap.get(filename);
+        if (statesFlow != null) {
+            return statesFlow.getRootState();
+        }
+        logger.warn("Cannot fine flow defined for {}", filename);
+        return null;
+    }
+
+    public State getNext(String filename, String currentStateId, String option) {
+        StatesFlow statesFlow = fileToFlowMap.get(filename);
+        State state = statesFlow.getState(currentStateId);
+        if (state == null) {
+            return null;
+        }
+        if (option == null || option.isEmpty()) {
+            option = DEFAULT_OPTION;
+        }
+        return state.getNext(option);
+    }
+
+    /**
+     * States flow will be loaded to statesFlow.
+     * @param stateFile the file to be loaded. filename pattern: "//w+.puml"
+     */
+    private void loadStatesFlow(String stateFile) {
+        logger.info("Loading file: {}", stateFile);
+        try (BufferedReader reader = new BufferedReader(new FileReader(stateFile))){
+            String line;
+            while ((line = reader.readLine()) != null) {
+                logger.debug("Loading line: {}", line);
+                parseLine(line);
+            }
+            logger.info("file loaded successfully! filename: {}, statesFlow: {}", stateFile, statesFlow);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Create state from line.
      * @param line read line from file
      */
-    public void parseLine(String line) {
+    private void parseLine(String line) {
         if (!pattern.matcher(line).matches()) {
             return;
         }
@@ -57,61 +116,27 @@ public class StateManager {
 
         System.out.println("line: " + line + ", id: " + id + ", nextInfo: " + nextInfo);
 
-        if (index > 0) {
-
-        }
         String nextId = (index > 0) ? nextInfo.substring(0, index).trim() : nextInfo.trim();
         String option = DEFAULT_OPTION;
         if (index > 0 && nextInfo.length() >= index) {
             option = nextInfo.substring(index + 1).trim();
         }
-        State nextState = nextStateFromId(nextId);
-        states.put(nextId, nextState);
-        State state = getState(id);
+        State nextState = statesFlow.nextStateFromId(nextId);
+        statesFlow.addState(nextId, nextState);
+        State state = statesFlow.getState(id);
         if (state == null) {
             System.out.println("Error! state is not definded yet! id={}" + id);
             return;
         }
         state.addNext(option, nextState);
-
-
     }
 
-    private State getState(String id) {
-        if (id == null || id.isEmpty()) {
-            return null;
+    private class FileFilter implements FilenameFilter {
+        public boolean accept(File file, String fileName) {
+            Pattern pattern = Pattern.compile("//w+.puml");
+
+            return pattern.matcher(fileName).matches();
         }
-        if ("[*]".equals(id)) {
-            return rootState;
-        }
-        return states.get(id);
     }
 
-    private State nextStateFromId(String nextId) {
-        if ("[*]".equals(nextId)) {
-            return endState;
-        } else if (states.containsKey(nextId)) {
-            return states.get(nextId);
-        }
-        return new BotState(nextId);
-    }
-
-    public State getRootState() {
-        return rootState;
-    }
-
-    public State getEndState() {
-        return endState;
-    }
-
-    public State getNext(String currentStateId, String option) {
-        State state = getState(currentStateId);
-        if (state == null) {
-            return null;
-        }
-        if (option == null || option.isEmpty()) {
-            option = DEFAULT_OPTION;
-        }
-        return state.getNext(option);
-    }
 }
