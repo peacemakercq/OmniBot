@@ -5,4 +5,5 @@ import java.util.List;
 public interface Conversation {
     List<String> getQuestions();
     String getSendTo();
+    String getId();
 }

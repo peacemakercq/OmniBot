@@ -4,8 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Manage Conversations
@@ -56,14 +60,27 @@ public class ConversationManager {
         this.conversationsFlowMap = conversationsFlowMap;
     }
 
-    public Conversation getConversation(String flowType, String id) {
-        assert flowType != null;
+    public Conversation getConversationForLex(@NotNull String flowType) {
         ConversationsFlow conversationsFlow = getConversationsFlow(flowType);
         if (conversationsFlow == null) {
             logger.warn("ConversationsFlow is not defined for flowType: {}", flowType);
             return null;
         }
-        Conversation conversation = conversationsFlow.getConversation(id);
-        return conversation;
+        Map<String, ConversationEntity> conversationMap = conversationsFlow.getConversationMap();
+
+        List<ConversationEntity> lexEnabledConversation = conversationMap.values().stream().filter(conversationEntity -> !Objects.isNull(conversationEntity)
+                && conversationEntity.isForLex()).collect(Collectors.toList());
+
+        return lexEnabledConversation.isEmpty()? null : lexEnabledConversation.get(0);
+
+    }
+
+    public Conversation getConversation(@NotNull String flowType, String id ) {
+        ConversationsFlow conversationsFlow = getConversationsFlow(flowType);
+        if (conversationsFlow == null) {
+            logger.warn("ConversationsFlow is not defined for flowType: {}", flowType);
+            return null;
+        }
+        return conversationsFlow.getConversation(id);
     }
 }

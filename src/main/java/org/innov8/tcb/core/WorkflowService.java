@@ -1,9 +1,10 @@
 package org.innov8.tcb.core;
 
-import javafx.util.Pair;
 
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 /**
  * This class is used to manage the flow for each session.
@@ -44,7 +45,7 @@ public interface WorkflowService {
      * @param flowType the flow type to initialize
      * @return A tuple of the next entry after ReadyForFulfillment
      *         key is the FIFO queue of questions, the questions should be in sequence
-     *         value is the next flow name
+     *         value is the current state name(id)
      */
-    org.apache.commons.lang3.tuple.Pair<Queue<String>, String> getLexFulfillmentEntry(String flowType);
+    Pair<List<String>, String> getLexFulfillmentEntry(String flowType);
 }

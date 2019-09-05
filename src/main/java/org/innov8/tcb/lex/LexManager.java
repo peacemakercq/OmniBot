@@ -16,8 +16,8 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Log4j2
@@ -55,11 +55,11 @@ public class LexManager
             else
             {
                 chatBot.sendMessage(recipient, "Thank you for your support, have a nice day, Bye.");
-                Pair<Queue<String>, String> lexFulfillmentEntry = workflow.getLexFulfillmentEntry(flowType);
+                Pair<List<String>, String> lexFulfillmentEntry =
+                        workflow.getLexFulfillmentEntry(flowType);
 
                 Map<String, String> questionsAndAnswers = postTextResponse.slots();
-                workflow.startWorkflow(flowType, lexFulfillmentEntry.getValue(),
-                                       questionsAndAnswers);
+                workflow.startWorkflow(flowType, lexFulfillmentEntry.getValue(), questionsAndAnswers);
             }
         });
     }

@@ -1,9 +1,10 @@
 
 conversationmanager:
-  flowType: umlState
+  flowType: LicenseNewal
   conversationMap:
     RenewStart:
       id: RenewStart
+      forLex: true
       sendTo: appOwner
       questions:
         - Do you want to renew {d:license}?\n{d:pre_defined_info}

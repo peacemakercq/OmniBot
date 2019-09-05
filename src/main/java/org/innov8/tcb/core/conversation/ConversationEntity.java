@@ -1,5 +1,7 @@
 package org.innov8.tcb.core.conversation;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,6 +11,10 @@ import java.util.List;
 public class ConversationEntity implements Conversation {
     private String id;
     private String sendTo;
+    @Getter
+    @Setter
+    private boolean forLex;
+
     private List<String> questions = new ArrayList<>();
 
     public String getSendTo() {

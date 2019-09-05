@@ -1,6 +1,6 @@
 package org.innov8.tcb.core;
 
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.innov8.tcb.core.conversation.Conversation;
@@ -8,10 +8,11 @@ import org.innov8.tcb.core.conversation.ConversationManager;
 import org.innov8.tcb.core.state.State;
 import org.innov8.tcb.core.state.StateManager;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The real class to implement WorkflowService
@@ -20,7 +21,7 @@ import java.util.concurrent.ConcurrentMap;
 public class WorkflowController implements WorkflowService {
     private Logger logger = LogManager.getLogger();
     private ConcurrentMap<String, Context> contextMap = new ConcurrentHashMap<>();
-    private static int contextIdRef = 0;
+    private AtomicInteger contextIdRef = new AtomicInteger(0);
 
     private static volatile WorkflowController instance;
     private WorkflowController() {}
@@ -47,7 +48,7 @@ public class WorkflowController implements WorkflowService {
             logger.error("Failed to create rootState for {}, flowType not found!", flowType);
             return null;
         }
-        String contextId = flowType.concat("_").concat(String.valueOf(++contextIdRef));
+        String contextId = flowType.concat("_").concat(String.valueOf(contextIdRef.incrementAndGet()));
         Context context = new Context(contextId, flowType, metadata);
         context.currentStateId = rootState.getId();
         context.conversation = ConversationManager.getInstance().getConversation(flowType, rootState.getId());
@@ -58,7 +59,16 @@ public class WorkflowController implements WorkflowService {
     @Override
     public String startWorkflow(String flowType, String nextState, Map<String, ?> metadata)
     {
-        return null;
+        if (flowType == null || flowType.isEmpty()) {
+            logger.error("Cannot create workflow for empty flowType!");
+            return null;
+        }
+        String contextId = flowType.concat("_").concat(String.valueOf(contextIdRef.incrementAndGet()));
+        Context context = new Context(contextId, flowType, metadata);
+        context.currentStateId = nextState;
+        context.conversation = ConversationManager.getInstance().getConversation(flowType, nextState);
+        contextMap.put(contextId, context);
+        return contextId;
     }
 
     @Override
@@ -88,9 +98,14 @@ public class WorkflowController implements WorkflowService {
     }
 
     @Override
-    public org.apache.commons.lang3.tuple.Pair<Queue<String>, String> getLexFulfillmentEntry(String flowType)
+    public Pair<List<String>, String> getLexFulfillmentEntry(String flowType)
     {
-        return null;
+        Conversation conversationForLex = ConversationManager.getInstance().getConversationForLex(flowType);
+
+        List<String> questions = conversationForLex.getQuestions();
+        String id = conversationForLex.getId();
+
+        return Pair.of(questions, id);
     }
 
     public void printContextCacheForId(String contextId) {
@@ -103,12 +118,12 @@ public class WorkflowController implements WorkflowService {
     public class Context {
         String contextId;
         String flowType;
-        Map<String, Object> metadata;
+        Map<String, ?> metadata;
         String currentStateId;
         ConcurrentMap<String, String> contextCache = new ConcurrentHashMap<>();
         Conversation conversation;
 
-        Context(String contextId, String flowType, Map<String, Object> metadata) {
+        Context(String contextId, String flowType, Map<String, ?> metadata) {
             this.contextId = contextId;
             this.flowType = flowType;
             this.metadata = metadata;
@@ -140,7 +155,7 @@ public class WorkflowController implements WorkflowService {
                 return null;
             }
             String question = conversation.getQuestions().get(posInConversation++);
-            return new Pair<>(conversation.getSendTo(), question);
+            return Pair.of(conversation.getSendTo(), question);
         }
     }
 }
