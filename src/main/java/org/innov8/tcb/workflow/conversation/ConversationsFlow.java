@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * This class stores all the Conversations for a flowType.
  * Created by wangqi on 2019/9/5.
  */
-@Component
 @ConfigurationProperties("conversationmanager")
 public class ConversationsFlow {
     /**
