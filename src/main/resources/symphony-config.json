@@ -8,8 +8,8 @@
   "agentHost": "develop2.symphony.com",
   "agentPort": 443,
 
-  "botUsername": "nomura_hackathon_bot_51",
-  "botEmailAddress": "nomura_hackathon_bot_51@devmeetup.com",
-  "botPrivateKeyPath": "C:\\Users\\kenzh\\",
-  "botPrivateKeyName": "nomura_hackathon_51_privatekey.pem"
+  "botUsername": "",
+  "botEmailAddress": "",
+  "botPrivateKeyPath": "",
+  "botPrivateKeyName": ""
 }
