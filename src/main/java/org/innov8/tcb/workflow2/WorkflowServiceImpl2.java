@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -113,20 +114,36 @@ public class WorkflowServiceImpl2 implements WorkflowService
     private void saveQuestion(WorkflowContext workflowContext, String concreateQuestion)
     {
         workflowContext.metadata.put(
-                "q:" + workflowContext.getCurrentStep().getName() + "_" + workflowContext.getCurrentQuestionIndex(),
+                "{q:" + workflowContext.getCurrentStep().getName() + "[" + workflowContext.getCurrentQuestionIndex() +"]}",
                 concreateQuestion);
     }
 
     private void saveAnswer(WorkflowContext workflowContext, String condition)
     {
         workflowContext.metadata.put(
-                "a:" + workflowContext.getCurrentStep().getName() + "_" + workflowContext.getCurrentQuestionIndex(),
+                "{a:" + workflowContext.getCurrentStep().getName() + "[" + workflowContext.getCurrentQuestionIndex() + "]}",
                 condition);
     }
 
-    private String expandPlaceHolder(String questionTemplate, WorkflowContext context)
-    {
-        return questionTemplate;
+    private static String expandPlaceHolder(String questionTemplate, WorkflowContext context) {
+        String result = expandPlaceHolder(questionTemplate, context, 'd');
+        result = expandPlaceHolder(questionTemplate, context, 'q');
+        result = expandPlaceHolder(questionTemplate, context, 'a');
+        return result;
+    }
+
+    private static String expandPlaceHolder(String questionTemplate, WorkflowContext context, char type) {
+        String startStr = "{" + type + ":";
+        String result = questionTemplate;
+        int startIndex = result.indexOf(startStr);
+        while (startIndex != -1) {
+            int endIndex = result.indexOf('}', startIndex);
+
+            String placeholder = result.substring(startIndex, endIndex + 1);
+            result = result.replace(placeholder, context.getMetadata().get(placeholder).toString());
+            startIndex = result.indexOf(startStr, endIndex);
+        }
+        return result;
     }
 
     private boolean matches(String[] actualConditions, String configuredConfigStr)
@@ -171,7 +188,9 @@ public class WorkflowServiceImpl2 implements WorkflowService
             this.contextId = typeName + UUID.randomUUID().toString();
             this.flowName = typeName;
             if (metadata != null) {
-                this.metadata = metadata;
+                this.metadata = metadata.entrySet().stream().collect(Collectors.toMap(
+                        e -> "{:d" + e.getKey() + "}",
+                        e -> e.getValue()));
             }
             setCurrentStep(currentStep);
         }
