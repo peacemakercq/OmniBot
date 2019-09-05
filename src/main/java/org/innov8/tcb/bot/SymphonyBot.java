@@ -1,69 +1,74 @@
 package org.innov8.tcb.bot;
 
+import clients.SymBotClient;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import javafx.util.Pair;
+import listeners.IMListener;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
+import model.InboundMessage;
+import model.OutboundMessage;
+import model.Stream;
+import model.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.client.exceptions.MessagesException;
-import org.symphonyoss.client.exceptions.StreamsException;
-import org.symphonyoss.client.exceptions.UsersClientException;
-import org.symphonyoss.client.model.Chat;
-import org.symphonyoss.client.services.ChatListener;
-import org.symphonyoss.client.services.ChatServiceListener;
-import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.symphony.clients.model.SymUser;
 
-import java.util.Collections;
-import java.util.Set;
+import javax.annotation.PostConstruct;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class SymphonyBot implements Bot, ChatListener, ChatServiceListener {
+public class SymphonyBot implements ChatBot, IMListener {
 
     @Autowired
-    private SymphonyClient symphonyClient;
+    private SymBotClient symBotClient;
+
+    private PublishSubject<Pair<String, String>> incomingMessages;
+
+    @PostConstruct
+    public void init() {
+        incomingMessages = PublishSubject.create();
+        symBotClient.getDatafeedEventsService().addIMListener(this);
+    }
 
     @Override
     public String sendMessage(String who, String message) {
-        Chat chat = new Chat();
-        chat.setLocalUser(symphonyClient.getLocalUser());
-
         try {
-            Set<SymUser> remoteUsers = Collections.singleton(symphonyClient.getUsersClient().getUserFromEmail(who));
+            UserInfo userInfo = symBotClient.getUsersClient().getUserFromEmail(who, false);
+            String streamId = symBotClient.getStreamsClient().getUserIMStreamId(userInfo.getId());
+            OutboundMessage outboundMessage = new OutboundMessage();
+            outboundMessage.setMessage(message);
+            symBotClient.getMessagesClient().sendMessage(streamId, outboundMessage);
 
-            chat.setRemoteUsers(remoteUsers);
-            chat.setStream(symphonyClient.getStreamsClient().getStream(remoteUsers));
-
-            sendMessage(chat, message);
-
-        } catch (UsersClientException e) {
+            StringBuilder sb = new StringBuilder();
+            CountDownLatch cdl = new CountDownLatch(1);
+            var subscription = incomingMessages.subscribe(s -> {
+                sb.append(s);
+                cdl.countDown();
+            });
+            cdl.await(30, TimeUnit.SECONDS);
+            subscription.dispose();
+            return sb.toString();
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (StreamsException e) {
-            e.printStackTrace();
-        } catch (MessagesException e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override
-    public void onChatMessage(SymMessage message) {
-
+    public Observable<Pair<String, String>> incomingMessage() {
+        return incomingMessages;
     }
 
     @Override
-    public void onNewChat(Chat chat) {
-        chat.addListener(this);
+    public void onIMMessage(InboundMessage message) {
+        incomingMessages.onNext(new Pair<>(
+                message.getUser().getEmail(),
+                message.getMessageText()));
     }
 
     @Override
-    public void onRemovedChat(Chat chat) {
-        chat.removeListener(this);
-    }
-
-    private void sendMessage(Chat chat, String message)
-            throws MessagesException {
-        SymMessage messageSubmission = new SymMessage();
-        messageSubmission.setMessageText(message);
-        symphonyClient.getChatService().addChat(chat);
-        symphonyClient.getMessageService().sendMessage(chat, messageSubmission);
+    public void onIMCreated(Stream stream) {
     }
 }
