@@ -28,7 +28,6 @@ public class SymphonyBotConfig {
         return symConfig;
     }
 
-    @Lazy
     @Bean
     public SymBotClient symBotClient(SymConfig config) {
         ISymAuth botAuth = new SymBotRSAAuth(config);
@@ -38,7 +37,6 @@ public class SymphonyBotConfig {
         return botClient;
     }
 
-    @Lazy
     @Bean("SymphonyBot")
     public ChatBot symphonyBot() {
         return new SymphonyBot();
