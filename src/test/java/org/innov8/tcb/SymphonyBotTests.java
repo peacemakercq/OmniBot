@@ -1,6 +1,6 @@
 package org.innov8.tcb;
 
-import org.innov8.tcb.bot.SymphonyBot;
+import org.innov8.tcb.bot.ChatBot;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class SymphonyBotTests {
 
     @Autowired
-    private SymphonyBot bot;
+    private ChatBot bot;
 
     @Test
     @Ignore("integration test.")
