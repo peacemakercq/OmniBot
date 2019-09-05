@@ -25,10 +25,8 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0-RC2'
 
 	implementation platform('software.amazon.awssdk:bom:2.5.29')
 	implementation 'software.amazon.awssdk:lexmodelbuilding'
