@@ -1,0 +1,28 @@
+steps:
+  - name: questionnaire
+    forLex: true
+    isEntrance: true
+    sendTo: appOwner
+    questions:
+      - Do you want to renew {d:license}?\n{d:pre_defined_info}
+      - How often do you use the application that you wish to renew license for?
+      - Are you the only person in your team whom require access to the application you wish to have license renewed?
+      - Is it possible to use a shared account to access the application you wish to have license renewed?
+      - How much disruption does it create for the work that you do in case your license renewal request cannot be approved?
+      - Are there any workaround you can source the same information you require without using the application you are requesting for license renewal?
+      - Can you access this license if required on another machine / another location (i.e. BCP site)?
+    nextSteps:
+      - name: getManagerApproval
+        condition: yes
+      - name: "[*]"
+        condition: no
+
+  - name: getManagerApproval
+    sendTo: manager
+    questions:
+      - Please approve ...
+    nextSteps:
+      - name: getBMOApproval
+        condition: yes
+      - name: Chehe
+        condition: no
