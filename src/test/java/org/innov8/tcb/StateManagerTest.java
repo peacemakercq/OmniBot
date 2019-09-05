@@ -1,9 +1,9 @@
-package org.innov8.tcb.state;
+package org.innov8.tcb;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.innov8.tcb.core.state.State;
-import org.innov8.tcb.core.state.StateManager;
+import org.innov8.tcb.workflow.state.State;
+import org.innov8.tcb.workflow.state.StateManager;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

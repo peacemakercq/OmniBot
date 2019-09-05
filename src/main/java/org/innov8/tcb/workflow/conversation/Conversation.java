@@ -1,4 +1,4 @@
-package org.innov8.tcb.core.conversation;
+package org.innov8.tcb.workflow.conversation;
 
 import java.util.List;
 

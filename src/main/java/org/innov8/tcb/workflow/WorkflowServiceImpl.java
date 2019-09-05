@@ -1,12 +1,12 @@
-package org.innov8.tcb.core;
+package org.innov8.tcb.workflow;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.innov8.tcb.core.conversation.Conversation;
-import org.innov8.tcb.core.conversation.ConversationManager;
-import org.innov8.tcb.core.state.State;
-import org.innov8.tcb.core.state.StateManager;
+import org.innov8.tcb.workflow.conversation.Conversation;
+import org.innov8.tcb.workflow.conversation.ConversationManager;
+import org.innov8.tcb.workflow.state.State;
+import org.innov8.tcb.workflow.state.StateManager;
 
 import java.util.List;
 import java.util.Map;
@@ -18,19 +18,19 @@ import java.util.concurrent.atomic.AtomicInteger;
  * The real class to implement WorkflowService
  * Created by wangqi on 2019/9/3.
  */
-public class WorkflowController implements WorkflowService {
+public class WorkflowServiceImpl implements WorkflowService {
     private Logger logger = LogManager.getLogger();
     private ConcurrentMap<String, Context> contextMap = new ConcurrentHashMap<>();
     private AtomicInteger contextIdRef = new AtomicInteger(0);
 
-    private static volatile WorkflowController instance;
-    private WorkflowController() {}
+    private static volatile WorkflowServiceImpl instance;
+    private WorkflowServiceImpl() {}
 
-    public static WorkflowController getInstance() {
+    public static WorkflowServiceImpl getInstance() {
         if (instance == null) {
-            synchronized (WorkflowController.class) {
+            synchronized (WorkflowServiceImpl.class) {
                 if (instance == null) {
-                    instance = new WorkflowController();
+                    instance = new WorkflowServiceImpl();
                 }
             }
         }

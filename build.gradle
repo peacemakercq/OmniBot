@@ -22,6 +22,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -31,7 +32,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-configuration-processor'
 	implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.0-RC2'
-	implementation 'org.symphonyoss.symphony:symphony-client:1.1.4'
     implementation 'com.symphony.platformsolutions:symphony-api-client-java:1.0.0'
     implementation 'org.glassfish.jersey.inject:jersey-hk2:2.28'
 	implementation "io.reactivex.rxjava3:rxjava:3.0.0-RC2"
