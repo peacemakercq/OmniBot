@@ -41,5 +41,5 @@ public interface WorkflowService
      *         key is the FIFO queue of questions, the questions should be in sequence
      *         value is the current state name(id)
      */
-    Pair<List<String>, String> getLexFulfillmentEntry(String flowName);
+    Pair<List<String>, Object> getLexFulfillmentEntry(String flowName);
 }

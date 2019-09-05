@@ -148,7 +148,7 @@ public class WorkflowServiceImpl2 implements WorkflowService
     }
 
     @Override
-    public Pair<List<String>, String> getLexFulfillmentEntry(String flowName)
+    public Pair<List<String>, Object> getLexFulfillmentEntry(String flowName)
     {
         return null;
     }

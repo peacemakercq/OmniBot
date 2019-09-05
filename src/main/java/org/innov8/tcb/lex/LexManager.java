@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class LexManager
@@ -55,10 +56,11 @@ public class LexManager
             else
             {
                 chatBot.sendMessage(recipient, "Thank you for your support, have a nice day, Bye.");
-                Pair<List<String>, String> lexFulfillmentEntry =
+                Pair<List<String>, Object> lexFulfillmentEntry =
                         workflow.getLexFulfillmentEntry(flowType);
 
-                Map<String, String> questionsAndAnswers = postTextResponse.slots();
+                Map<String, Object> questionsAndAnswers = postTextResponse.slots().entrySet().stream()
+                        .collect(Collectors.toMap(entry->entry.getKey(), entry->entry.getValue()));
                 workflow.initializeWorkflow(flowType, questionsAndAnswers, true);
             }
         });
