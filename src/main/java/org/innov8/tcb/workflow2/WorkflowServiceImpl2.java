@@ -25,7 +25,7 @@ public class WorkflowServiceImpl2 implements WorkflowService
     private WorkflowLoader workflowLoader;
 
     @Override
-    public String initializeWorkflow(@NotNull String flowName, Map<String, ?> metadata,
+    public String initializeWorkflow(@NotNull String flowName, Map<String, Object> metadata,
                                      boolean startFromLex) {
         log.info("initialize " + flowName + ", startFromLex=" + startFromLex + ", metadata=" + (metadata != null ? metadata.toString() : ""));
         Workflow workflow = workflowLoader.getWorkflows().get(flowName);
@@ -38,7 +38,7 @@ public class WorkflowServiceImpl2 implements WorkflowService
     }
 
     @Override
-    public String initializeWorkflow(String flowName, Map<String, ?> metadata)
+    public String initializeWorkflow(String flowName, Map<String, Object> metadata)
     {
         return initializeWorkflow(flowName, metadata, false);
     }
@@ -85,7 +85,7 @@ public class WorkflowServiceImpl2 implements WorkflowService
                                 forwardingStep.getQuestions().get(++workflowContext.currentQuestionIndex);
 
                         //TODO populate the placeholder
-                        String concreteQuestion = populateQuestion(questionTemplate, workflowContext);
+                        String concreteQuestion = expandPlaceHolder(questionTemplate, workflowContext);
 
                         saveQuestion(workflowContext, concreteQuestion);
                         log.info("Context " + contextId + " is sending next question: " + concreteQuestion + " to " + forwardingStep.getSendTo());
@@ -99,7 +99,7 @@ public class WorkflowServiceImpl2 implements WorkflowService
             // 2. get next question and sendTo, return Pair<question,recipient>
             String recipient = currentStep.getSendTo();
             String questionTemplate = questions.get(nextQuestionIndex);
-            String concreteQuestion = populateQuestion(questionTemplate, workflowContext);
+            String concreteQuestion = expandPlaceHolder(questionTemplate, workflowContext);
             saveQuestion(workflowContext, concreteQuestion);
             return Pair.of(concreteQuestion, recipient);
         }
@@ -112,17 +112,21 @@ public class WorkflowServiceImpl2 implements WorkflowService
 
     private void saveQuestion(WorkflowContext workflowContext, String concreateQuestion)
     {
-
-    }
-
-    private String populateQuestion(String questionTemplate, WorkflowContext context)
-    {
-        return questionTemplate;
+        workflowContext.metadata.put(
+                "q:" + workflowContext.getCurrentStep().getName() + "_" + workflowContext.getCurrentQuestionIndex(),
+                concreateQuestion);
     }
 
     private void saveAnswer(WorkflowContext workflowContext, String condition)
     {
+        workflowContext.metadata.put(
+                "a:" + workflowContext.getCurrentStep().getName() + "_" + workflowContext.getCurrentQuestionIndex(),
+                condition);
+    }
 
+    private String expandPlaceHolder(String questionTemplate, WorkflowContext context)
+    {
+        return questionTemplate;
     }
 
     private boolean matches(String[] actualConditions, String configuredConfigStr)
@@ -153,7 +157,7 @@ public class WorkflowServiceImpl2 implements WorkflowService
     private static final class WorkflowContext {
         private String contextId;
         private String flowName;
-        private Map<String, ?> metadata = new HashMap<>();
+        private Map<String, Object> metadata = new HashMap<>();
         private Step currentStep;
         private int currentQuestionIndex = -1;
 
@@ -162,7 +166,7 @@ public class WorkflowServiceImpl2 implements WorkflowService
          */
         private String[] currentConditions;
 
-        private WorkflowContext(String typeName, Map<String, ?> metadata,
+        private WorkflowContext(String typeName, Map<String, Object> metadata,
                                 Step currentStep) {
             this.contextId = typeName + UUID.randomUUID().toString();
             this.flowName = typeName;
