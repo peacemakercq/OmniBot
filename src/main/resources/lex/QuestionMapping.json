@@ -1,0 +1,8 @@
+{
+  "Frequency": 1,
+  "OnlyPerson": 2,
+  "CanShareLicense": 3,
+  "Disruption": 4,
+  "Workaround": 5,
+  "DifferentAccess": 6
+}

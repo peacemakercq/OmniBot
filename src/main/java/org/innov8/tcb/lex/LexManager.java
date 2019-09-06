@@ -3,7 +3,6 @@ package org.innov8.tcb.lex;
 
 import io.reactivex.rxjava3.disposables.Disposable;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.tuple.Pair;
 import org.innov8.tcb.bot.ChatBot;
 import org.innov8.tcb.workflow2.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +13,16 @@ import software.amazon.awssdk.services.lexruntime.model.PutSessionResponse;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.stream.Collectors;
 
 @Log4j2
 public class LexManager
 {
+    private Map<Integer, String> intentMap = new HashMap<>();
 
     @Resource(name = "ChatBotExecutor")
     private ScheduledExecutorService scheduledExecutorService;
@@ -40,6 +39,14 @@ public class LexManager
     private Disposable subscription;
 
     public void init() {
+
+        intentMap.put(1, "Frequency");
+        intentMap.put(2, "OnlyPerson");
+        intentMap.put(3, "CanShareLicense");
+        intentMap.put(4, "Disruption");
+        intentMap.put(5, "Workaround");
+        intentMap.put(6, "DifferentAccess");
+
         subscription = chatBot.incomingMessage().subscribe(pair -> {
 
             String recipient = pair.getKey();
@@ -56,12 +63,15 @@ public class LexManager
             else
             {
                 chatBot.sendMessage(recipient, "Thank you for your support, have a nice day, Bye.");
-                Pair<List<String>, Object> lexFulfillmentEntry =
-                        workflow.getLexFulfillmentEntry(flowType);
+                String contextId = workflow.initializeWorkflow(flowType, null, true);
+                Map<String, String> slots = postTextResponse.slots();
+                for (int i = 0 ; i< intentMap.size(); i++)
+                {
+                    String intent = intentMap.get(i+1);
+                    String answer = slots.get(intent);
+                    workflow.nextStep(contextId, answer);
+                }
 
-                Map<String, Object> questionsAndAnswers = postTextResponse.slots().entrySet().stream()
-                        .collect(Collectors.toMap(entry->entry.getKey(), entry->entry.getValue()));
-                workflow.initializeWorkflow(flowType, questionsAndAnswers, true);
             }
         });
     }

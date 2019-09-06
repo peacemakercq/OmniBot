@@ -21,6 +21,9 @@ public interface WorkflowService
      * @param startFromLex flag to indicate if the flow is kick by Lex
      * @return a unique context ID of the running workflow
      */
+    String initializeWorkflow(String flowName, Map<String, Object> metadata,
+                              boolean startFromLex, String[] conditions);
+
     String initializeWorkflow(String flowName, Map<String, Object> metadata, boolean startFromLex);
 
     String initializeWorkflow(String flowName, Map<String, Object> metadata);

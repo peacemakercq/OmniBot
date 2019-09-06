@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -26,15 +23,25 @@ public class WorkflowServiceImpl2 implements WorkflowService
 
     @Override
     public String initializeWorkflow(@NotNull String flowName, Map<String, Object> metadata,
-                                     boolean startFromLex) {
-        log.info("initialize " + flowName + ", startFromLex=" + startFromLex + ", metadata=" + (metadata != null ? metadata.toString() : ""));
+                                     boolean startFromLex, String[] conditions)
+    {
+        log.info("initialize " + flowName + ", startFromLex=" + startFromLex +
+                         ", metadata=" + (metadata != null ? metadata.toString() : "") +
+                         ", conditions=" + (conditions != null ? Arrays.toString(conditions) : ""));
         Workflow workflow = workflowLoader.getWorkflows().get(flowName);
         Step currentStep = workflow.getLexStep();
         WorkflowContext workflowContext = new WorkflowContext(flowName, metadata, startFromLex ?
                 currentStep : null);
         String contextId = workflowContext.getContextId();
         contextMap.put(contextId, workflowContext);
+        workflowContext.currentConditions = conditions;
         return contextId;
+    }
+
+    @Override
+    public String initializeWorkflow(@NotNull String flowName, Map<String, Object> metadata,
+                                     boolean startFromLex) {
+        return initializeWorkflow(flowName, metadata, startFromLex, null);
     }
 
     @Override
