@@ -37,6 +37,12 @@ public class MockChatBot implements ChatBot
     }
 
     @Override
+    public void sendNotification(String who, String message)
+    {
+        log.info("Sending notification {} to {}", who, message);
+    }
+
+    @Override
     public Observable<Pair<String, String>> incomingMessage()
     {
 

@@ -56,6 +56,22 @@ public class SymphonyBot implements ChatBot, IMListener {
     }
 
     @Override
+    public void sendNotification(String who, String message)
+    {
+        try {
+            log.info("Sending symphony notification: " + message + " to " + who);
+            UserInfo userInfo = symBotClient.getUsersClient().getUserFromEmail(who, false);
+            String streamId = symBotClient.getStreamsClient().getUserIMStreamId(userInfo.getId());
+            OutboundMessage outboundMessage = new OutboundMessage();
+            outboundMessage.setMessage(message);
+            symBotClient.getMessagesClient().sendMessage(streamId, outboundMessage);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public Observable<Pair<String, String>> incomingMessage() {
         return incomingMessages;
     }
