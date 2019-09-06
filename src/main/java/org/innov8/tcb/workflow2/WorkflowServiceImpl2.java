@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -127,8 +124,8 @@ public class WorkflowServiceImpl2 implements WorkflowService
 
     private static String expandPlaceHolder(String questionTemplate, WorkflowContext context) {
         String result = expandPlaceHolder(questionTemplate, context, 'd');
-        result = expandPlaceHolder(questionTemplate, context, 'q');
-        result = expandPlaceHolder(questionTemplate, context, 'a');
+        result = expandPlaceHolder(result, context, 'q');
+        result = expandPlaceHolder(result, context, 'a');
         return result;
     }
 
@@ -140,7 +137,9 @@ public class WorkflowServiceImpl2 implements WorkflowService
             int endIndex = result.indexOf('}', startIndex);
 
             String placeholder = result.substring(startIndex, endIndex + 1);
-            result = result.replace(placeholder, context.getMetadata().get(placeholder).toString());
+            result = result.replace(placeholder,
+                    Optional.ofNullable(context.getMetadata().get(placeholder))
+                            .map(s -> (String) s).orElse(""));
             startIndex = result.indexOf(startStr, endIndex);
         }
         return result;

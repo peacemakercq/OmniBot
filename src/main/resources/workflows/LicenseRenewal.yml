@@ -3,7 +3,7 @@ steps:
     isEntrance: true
     sendTo: appOwner
     questions:
-      - Do you want to renew {d:license}?\n{d:pre_defined_info}
+      - Do you want to renew {d:license}?{d:pre_defined_info}
     nextSteps:
       - name: questionnaire
         condition: Yes
@@ -43,7 +43,7 @@ steps:
   - name: scenario1
     sendTo: appOwner
     questions:
-      - You can consider utilizing the work around to source the info.\n Do you still wish to proceed with this license renewal request?
+      - You can consider utilizing the work around to source the info. Do you still wish to proceed with this license renewal request?
     nextSteps:
       - name: getManagerApproval
         condition: Yes
@@ -53,7 +53,7 @@ steps:
   - name: scenario2
     sendTo: appOwner
     questions:
-      - You can consider to find out possible workaround to source the info.\n Do you still wish to proceed with this license renewal request?
+      - You can consider to find out possible workaround to source the info. Do you still wish to proceed with this license renewal request?
     nextSteps:
       - name: getManagerApproval
         condition: Yes
@@ -63,7 +63,7 @@ steps:
   - name: scenario5
     sendTo: appOwner
     questions:
-      - You can consider utilizing a shared account to source the info.\n Do you still wish to proceed with this license renewal request?
+      - You can consider utilizing a shared account to source the info. Do you still wish to proceed with this license renewal request?
     nextSteps:
       - name: getManagerApproval
         condition: Yes
@@ -73,7 +73,7 @@ steps:
   - name: scenario6
     sendTo: appOwner
     questions:
-      - You can explore possibility to utilize a shared account if available.\n Do you still wish to proceed with this license renewal request?
+      - You can explore possibility to utilize a shared account if available. Do you still wish to proceed with this license renewal request?
     nextSteps:
       - name: getManagerApproval
         condition: Yes
@@ -83,7 +83,7 @@ steps:
   - name: scenario8
     sendTo: appOwner
     questions:
-      - You can consider utilizing a shared account to source the info.\n Do you still wish to proceed with this license renewal request?
+      - You can consider utilizing a shared account to source the info. Do you still wish to proceed with this license renewal request?
     nextSteps:
       - name: getManagerApproval
         condition: Yes
@@ -93,7 +93,7 @@ steps:
   - name: scenario9
     sendTo: appOwner
     questions:
-      - You can explore possibility to utilize a shared account if available.\n Do you still wish to proceed with this license renewal request?
+      - You can explore possibility to utilize a shared account if available. Do you still wish to proceed with this license renewal request?
     nextSteps:
       - name: getManagerApproval
         condition: Yes
@@ -103,7 +103,7 @@ steps:
   - name: getManagerApproval
     sendTo: manager
     questions:
-      - Please approve {d:user}'s request to renew {d:license}\n{q:questionnaire[0]}-{a:questionaire[0]}
+      - Please approve {d:user}'s request to renew {d:license} -- Q&A Results - {q:questionnaire[0]}-{a:questionnaire[0]}
     nextSteps:
       - name: getBMOApproval
         condition: yes

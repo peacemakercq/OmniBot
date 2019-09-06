@@ -32,7 +32,7 @@ public class WorkflowServiceTests {
     public void nextStep_firstCalled_returnQuestion1() {
         String contextId = workflowService.initializeWorkflow(TEST_FLOW, null);
         Pair nextQuestion = workflowService.nextStep(contextId, null);
-        assertEquals("Do you want to renew {d:license}?\\n{d:pre_defined_info}", nextQuestion.getLeft());
+        assertEquals("Do you want to renew ?{d:pre_defined_info}", nextQuestion.getLeft());
         assertEquals("appOwner", nextQuestion.getRight());
     }
 
@@ -66,7 +66,7 @@ public class WorkflowServiceTests {
         nextQuestion = workflowService.nextStep(contextId, "Yes");
         nextQuestion = workflowService.nextStep(contextId, "No"); // Q6
 
-        assertEquals("Please approve {d:user}'s request to renew {d:license}\\n{q:questionnaire[0]}-{a:questionaire[0]}", nextQuestion.getLeft());
+        assertEquals("Please approve 's request to renew  -- Q&A Results - How often do you use the application that you wish to renew license for?-Yes", nextQuestion.getLeft());
         assertEquals("manager", nextQuestion.getRight());
     }
 
@@ -83,7 +83,7 @@ public class WorkflowServiceTests {
         nextQuestion = workflowService.nextStep(contextId, "Yes");
         nextQuestion = workflowService.nextStep(contextId, "No"); // Q6
 
-        assertEquals("Please approve {d:user}'s request to renew {d:license}\\n{q:questionnaire[0]}-{a:questionaire[0]}", nextQuestion.getLeft());
+        assertEquals("Please approve 's request to renew  -- Q&A Results - How often do you use the application that you wish to renew license for?-Yes", nextQuestion.getLeft());
         assertEquals("manager", nextQuestion.getRight());
     }
 
@@ -101,7 +101,7 @@ public class WorkflowServiceTests {
         nextQuestion = workflowService.nextStep(contextId, "Yes");
         nextQuestion = workflowService.nextStep(contextId, "No"); // Q6
 
-        assertEquals("You can consider utilizing a shared account to source the info.\\n Do you still wish to proceed with this license renewal request?", nextQuestion.getLeft());
+        assertEquals("You can consider utilizing a shared account to source the info. Do you still wish to proceed with this license renewal request?", nextQuestion.getLeft());
         assertEquals("appOwner", nextQuestion.getRight());
     }
 
@@ -122,7 +122,7 @@ public class WorkflowServiceTests {
         nextQuestion = workflowService.nextStep(contextId, "Yes");  // confirm to ask manager approval
         nextQuestion = workflowService.nextStep(contextId, "Yes");  // manager approved
 
-        assertEquals("Please review license renewal request {d:pre_defined_info}", nextQuestion.getLeft());
+        assertEquals("Please review license renewal request ", nextQuestion.getLeft());
         assertEquals("BMO", nextQuestion.getRight());
     }
 }

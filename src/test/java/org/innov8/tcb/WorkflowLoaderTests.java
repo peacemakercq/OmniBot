@@ -21,6 +21,6 @@ public class WorkflowLoaderTests {
     @Test
     public void testStepsParsing() throws IOException {
         assertEquals(1, workflowLoader.getWorkflows().size());
-        assertEquals(2, workflowLoader.getWorkflows().get("LicenseRenewal").getSteps().size());
+        assertEquals(10, workflowLoader.getWorkflows().get("LicenseRenewal").getSteps().size());
     }
 }
