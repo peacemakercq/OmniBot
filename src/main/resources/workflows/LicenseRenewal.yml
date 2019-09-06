@@ -119,3 +119,10 @@ steps:
         condition: yes
       - name: "[*]"
         condition: no
+    notifications:
+      - message: user request to renew {d:license} has been approved
+        sendTo: manager
+        condition: Yes
+      - message: user request to renew {d:license} has been approved
+        sendTo: bmo
+        condition: Yes
