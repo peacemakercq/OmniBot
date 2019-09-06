@@ -109,8 +109,8 @@ public class WorkflowServiceImpl2 implements WorkflowService
             if(currentStep.getNotifications()!=null) {
                 for (Notification notification : currentStep.getNotifications()) {
                     if (matches(workflowContext.currentConditions, notification.getCondition())) {
-                        String concreteNotification = expandPlaceHolder(notification.getMessage(), workflowContext);
-
+                        String concreteNotification =
+                                StringExpansion.expandLine(notification.getMessage(), workflowContext.metadata);
                         log.info("Context " + contextId + " is sending notification: " + concreteNotification + " to " + notification.getSendTo());
                         notificationSubject.onNext(Pair.of(notification.getSendTo(), concreteNotification));
                     }
@@ -122,7 +122,7 @@ public class WorkflowServiceImpl2 implements WorkflowService
             // 2. get next question and sendTo, return Pair<question,recipient>
             String recipient = currentStep.getSendTo();
             String questionTemplate = questions.get(nextQuestionIndex);
-            String concreteQuestion = expandPlaceHolder(questionTemplate, workflowContext);
+            String concreteQuestion = StringExpansion.expandLine(questionTemplate, workflowContext.metadata);
             saveQuestion(workflowContext, concreteQuestion);
             return Pair.of(concreteQuestion, recipient);
         }
