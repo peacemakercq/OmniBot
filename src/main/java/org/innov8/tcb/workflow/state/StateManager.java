@@ -83,6 +83,15 @@ public class StateManager {
         return state.getNext(DEFAULT_OPTION);
     }
 
+    public ConcurrentMap<String, State> getNextStates(String filename, String currentStateId) {
+        StatesFlow statesFlow = fileToFlowMap.get(filename);
+        State state = statesFlow.getState(currentStateId);
+        if (state == null) {
+            return null;
+        }
+        return state.getNextStates();
+    }
+
     /**
      * States flow will be loaded to statesFlow.
      * @param stateFile the file to be loaded. filename pattern: "//w+.puml"

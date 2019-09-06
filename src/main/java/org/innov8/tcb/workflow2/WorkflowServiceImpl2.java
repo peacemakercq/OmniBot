@@ -3,6 +3,8 @@ package org.innov8.tcb.workflow2;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
+import org.innov8.tcb.workflow.state.State;
+import org.innov8.tcb.workflow.state.StateManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,6 +84,28 @@ public class WorkflowServiceImpl2 implements WorkflowService
             // 2. judge if the input condition matches the condition of the current step
             List<NextStep> nextSteps = currentStep.getNextSteps();
 
+            ConcurrentMap<String, State> nextStates = StateManager.getInstance().getNextStates(workflowContext.flowName,
+                                                                                               workflowContext.currentStep.getName());
+
+            for (String configuredCondition : nextStates.keySet())
+            {
+                if (matches(workflowContext.currentConditions, configuredCondition)) {
+                    String name = nextStates.get(configuredCondition).getId();
+                    Step forwardingStep = getWorkflow(workflowContext).getSteps().get(name);
+                    if (forwardingStep != null) {
+                        workflowContext.setCurrentStep(forwardingStep);
+                        String questionTemplate =
+                                forwardingStep.getQuestions().get(++workflowContext.currentQuestionIndex);
+
+                        //TODO populate the placeholder
+                        String concreteQuestion = expandPlaceHolder(questionTemplate, workflowContext);
+
+                        saveQuestion(workflowContext, concreteQuestion);
+                        log.info("Context " + contextId + " is sending next question: " + concreteQuestion + " to " + forwardingStep.getSendTo());
+                        return Pair.of(concreteQuestion, forwardingStep.getSendTo());
+                    }
+                }
+            }/*
             for (NextStep nextStep : nextSteps) {
                 if (matches(workflowContext.currentConditions, nextStep.getCondition())) {
                     String name = nextStep.getName();
@@ -99,7 +123,7 @@ public class WorkflowServiceImpl2 implements WorkflowService
                         return Pair.of(concreteQuestion, forwardingStep.getSendTo());
                     }
                 }
-            }
+            }*/
 
         } else {
             // 1. collect current condition

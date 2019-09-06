@@ -10,13 +10,13 @@ import java.util.concurrent.ConcurrentMap;
  * Main class to store state information
  * Created by wangqi on 2019/9/3.
  */
-public class BotState implements State {
+public class StateImpl implements State {
     private Logger logger = LogManager.getLogger();
 
     private String id;
     private ConcurrentMap<String, State> nextStates = new ConcurrentHashMap<>();
 
-    BotState(String id) {
+    StateImpl(String id) {
         this.id = id;
     }
 
@@ -47,6 +47,9 @@ public class BotState implements State {
         return nextStates.keySet().contains(option);
     }
 
+    public ConcurrentMap<String, State> getNextStates() {
+        return nextStates;
+    }
     @Override
     public String toString() {
         return String.format("{%s, next options: %s)", id, nextStates.keySet());

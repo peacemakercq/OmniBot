@@ -38,7 +38,19 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
 
-    public String startWorkflow(String flowType, Map<String, Object> metadata) {
+    @Override
+    public String initializeWorkflow(String flowName, Map<String, Object> metadata, boolean startFromLex, String[] conditions)
+    {
+        return null;
+    }
+
+    @Override
+    public String initializeWorkflow(String flowName, Map<String, Object> metadata, boolean startFromLex)
+    {
+        return null;
+    }
+
+    public String initializeWorkflow(String flowType, Map<String, Object> metadata) {
         if (flowType == null || flowType.isEmpty()) {
             logger.error("Cannot create workflow for empty flowType!");
             return null;
@@ -56,8 +68,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         return contextId;
     }
 
-    @Override
-    public String startWorkflow(String flowType, String nextState, Map<String, ?> metadata)
+    public String initializeWorkflow(String flowType, String nextState, Map<String, ?> metadata)
     {
         if (flowType == null || flowType.isEmpty()) {
             logger.error("Cannot create workflow for empty flowType!");
@@ -72,7 +83,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
-    public Pair<String, String> nextState(String contextId, String response) {
+    public Pair<String, String> nextStep(String contextId, String response) {
 
         if (contextId == null || contextId.isEmpty() || ! contextMap.containsKey(contextId)) {
             logger.warn("The contextId {} does not exist! return null!", contextId);
@@ -98,7 +109,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
     @Override
-    public Pair<List<String>, String> getLexFulfillmentEntry(String flowType)
+    public Pair<List<String>, Object> getLexFulfillmentEntry(String flowType)
     {
         Conversation conversationForLex = ConversationManager.getInstance().getConversationForLex(flowType);
 

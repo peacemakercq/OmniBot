@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class StatesFlow {
 
-    private State rootState = new BotState("startBot");
-    private State endState = new BotState("endBot");
+    private State rootState = new StateImpl("startBot");
+    private State endState = new StateImpl("endBot");
     private ConcurrentMap<String, State> states = new ConcurrentHashMap<>();
 
     /**
@@ -45,7 +45,7 @@ public class StatesFlow {
         } else if (states.containsKey(nextId)) {
             return states.get(nextId);
         }
-        return new BotState(nextId);
+        return new StateImpl(nextId);
     }
 
     public State getRootState() {
