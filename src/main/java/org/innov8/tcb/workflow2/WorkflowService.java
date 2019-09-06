@@ -1,6 +1,7 @@
 package org.innov8.tcb.workflow2;
 
 
+import io.reactivex.rxjava3.core.Observable;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
@@ -45,4 +46,11 @@ public interface WorkflowService
      *         value is the current state name(id)
      */
     Pair<List<String>, Object> getLexFulfillmentEntry(String flowName);
+
+    /**
+     * Get the notification stream
+     *
+     * @return returns an Observable containing a the notification of <Who, Message>
+     */
+    Observable<Pair<String, String>> notification();
 }

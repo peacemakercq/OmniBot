@@ -19,4 +19,6 @@ public class Step {
     private List<String> questions;
     @JsonProperty
     private List<NextStep> nextSteps;
+    @JsonProperty
+    private List<Notification> notifications;
 }

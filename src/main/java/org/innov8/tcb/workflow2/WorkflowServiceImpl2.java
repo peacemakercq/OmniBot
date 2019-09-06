@@ -1,5 +1,7 @@
 package org.innov8.tcb.workflow2;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
@@ -21,6 +23,8 @@ public class WorkflowServiceImpl2 implements WorkflowService
 
     @Autowired
     private WorkflowLoader workflowLoader;
+
+    private PublishSubject<Pair<String,String>> notificationSubject = PublishSubject.create();
 
     @Override
     public String initializeWorkflow(@NotNull String flowName, Map<String, Object> metadata,
@@ -102,6 +106,17 @@ public class WorkflowServiceImpl2 implements WorkflowService
                 }
             }
 
+            if(currentStep.getNotifications()!=null) {
+                for (Notification notification : currentStep.getNotifications()) {
+                    if (matches(workflowContext.currentConditions, notification.getCondition())) {
+                        String concreteNotification = expandPlaceHolder(notification.getMessage(), workflowContext);
+
+                        log.info("Context " + contextId + " is sending notification: " + concreteNotification + " to " + notification.getSendTo());
+                        notificationSubject.onNext(Pair.of(notification.getSendTo(), concreteNotification));
+                    }
+                }
+            }
+
         } else {
             // 1. collect current condition
             // 2. get next question and sendTo, return Pair<question,recipient>
@@ -177,6 +192,11 @@ public class WorkflowServiceImpl2 implements WorkflowService
     public Pair<List<String>, Object> getLexFulfillmentEntry(String flowName)
     {
         return null;
+    }
+
+    @Override
+    public Observable<Pair<String, String>> notification() {
+        return notificationSubject;
     }
 
     @Getter

@@ -7,6 +7,7 @@ import org.innov8.tcb.workflow2.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 
 @RestController
@@ -18,6 +19,14 @@ public class WorkflowController {
 
     @Autowired
     private ChatBot chatBot;
+
+    @PostConstruct
+    public void forwardNotifications() {
+        workflowService.notification().subscribe(pair -> {
+            chatBot.sendNotification(pair.getLeft(), pair.getRight());
+        });
+    }
+
 
     @PostMapping(
             path="/{workflow}",
@@ -36,4 +45,6 @@ public class WorkflowController {
         }
         return contextId;
     }
+
+
 }
